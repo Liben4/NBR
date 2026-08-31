@@ -11,13 +11,22 @@ import {
   Radio, 
   Compass, 
   Sparkles,
-  Lock
+  Lock,
+  LogOut,
+  ShieldCheck
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { CategoryType } from '../types';
 
 export const Footer: React.FC = () => {
-  const { setCurrentView, setSelectedCategory, setIsNewsletterModalOpen } = useApp();
+  const { 
+    setCurrentView, 
+    setSelectedCategory, 
+    setIsNewsletterModalOpen,
+    adminUser,
+    isAdminLoggedIn,
+    logoutAdmin
+  } = useApp();
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -168,18 +177,44 @@ export const Footer: React.FC = () => {
                   Daily Executive Morning Briefing
                 </button>
               </li>
-              <li>
-                <button
-                  onClick={() => {
-                    setCurrentView('admin');
-                    scrollToTop();
-                  }}
-                  className="hover:text-amber-400 text-slate-500 transition-colors flex items-center gap-1.5 text-[11px]"
-                >
-                  <Lock className="w-3 h-3" />
-                  <span>Newsroom Editorial Login</span>
-                </button>
-              </li>
+              {isAdminLoggedIn ? (
+                <li className="pt-2 border-t border-slate-850">
+                  <div className="flex items-center justify-between text-[11px]">
+                    <button
+                      onClick={() => {
+                        setCurrentView('admin');
+                        scrollToTop();
+                      }}
+                      className="text-amber-400 hover:text-amber-300 transition-colors flex items-center gap-1.5 font-bold"
+                    >
+                      <ShieldCheck className="w-3.5 h-3.5" />
+                      <span>Admin Desk ({adminUser?.role})</span>
+                    </button>
+
+                    <button
+                      onClick={logoutAdmin}
+                      className="text-rose-400 hover:text-rose-300 transition-colors flex items-center gap-1 text-[10px]"
+                      title="Log Out of Admin Desk"
+                    >
+                      <LogOut className="w-3 h-3" />
+                      <span>Log Out</span>
+                    </button>
+                  </div>
+                </li>
+              ) : (
+                <li>
+                  <button
+                    onClick={() => {
+                      setCurrentView('admin');
+                      scrollToTop();
+                    }}
+                    className="hover:text-amber-400 text-slate-500 transition-colors flex items-center gap-1.5 text-[11px]"
+                  >
+                    <Lock className="w-3 h-3" />
+                    <span>Staff & Editorial Newsroom Login</span>
+                  </button>
+                </li>
+              )}
             </ul>
 
             {/* Newsletter quick box in footer */}

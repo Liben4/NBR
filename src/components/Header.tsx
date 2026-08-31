@@ -11,7 +11,10 @@ import {
   TrendingUp, 
   Globe, 
   ChevronRight,
-  Sparkles
+  Sparkles,
+  LogOut,
+  Lock,
+  UserCheck
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { CategoryType } from '../types';
@@ -31,6 +34,9 @@ export const Header: React.FC = () => {
   const { 
     isDarkMode, 
     toggleTheme, 
+    adminUser,
+    isAdminLoggedIn,
+    logoutAdmin,
     currentView, 
     setCurrentView, 
     selectedCategory, 
@@ -67,6 +73,50 @@ export const Header: React.FC = () => {
 
   return (
     <header className="w-full flex flex-col border-b border-slate-800/80 bg-slate-950 text-slate-100 transition-colors duration-200">
+      
+      {/* 0. ADMIN ACTIVE STATUS BANNER (Rendered only when logged in as Admin) */}
+      {isAdminLoggedIn && adminUser && (
+        <div className="w-full bg-gradient-to-r from-blue-950 via-slate-900 to-amber-950/40 text-xs border-b border-amber-500/30 py-1.5 px-4 sm:px-8">
+          <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-2 text-slate-200">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="font-bold text-amber-300 font-brand uppercase tracking-wider text-[11px]">
+                Editorial Session:
+              </span>
+              <span className="font-semibold text-slate-100">{adminUser.name}</span>
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/30 hidden sm:inline">
+                {adminUser.role}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-3 ml-auto">
+              <button
+                onClick={() => {
+                  setCurrentView('admin');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className={`text-xs font-semibold px-3 py-1 rounded-lg transition-all ${
+                  currentView === 'admin' 
+                    ? 'bg-amber-400 text-slate-950 font-bold' 
+                    : 'bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-400/40'
+                }`}
+              >
+                {currentView === 'admin' ? 'Active in CMS Desk' : 'Open Admin CMS Desk'}
+              </button>
+
+              <button
+                onClick={logoutAdmin}
+                className="inline-flex items-center gap-1 text-xs font-semibold text-rose-300 hover:text-rose-100 px-2 py-1 rounded hover:bg-rose-950/60 transition-colors"
+                title="Log out of Editorial Administration"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span>Log Out</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* 1. TOP METADATA & FINANCIAL TICKER BAR */}
       <div className="w-full bg-slate-900/90 text-xs border-b border-slate-800/60 py-1.5 px-4 sm:px-8">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
@@ -109,13 +159,27 @@ export const Header: React.FC = () => {
                 Business Leaders
               </button>
               <span className="hidden sm:inline text-slate-700">•</span>
-              <button 
-                onClick={() => setCurrentView('admin')}
-                className="flex items-center gap-1 hover:text-blue-400 transition-colors font-medium text-slate-300"
-              >
-                <ShieldCheck className="w-3.5 h-3.5 text-blue-400" />
-                <span>Admin</span>
-              </button>
+              
+              {/* Staff Portal / Admin Button */}
+              {isAdminLoggedIn ? (
+                <button 
+                  onClick={() => setCurrentView('admin')}
+                  className="flex items-center gap-1 text-amber-400 hover:text-amber-300 transition-colors font-semibold"
+                  title="Open Admin CMS"
+                >
+                  <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Admin Desk</span>
+                </button>
+              ) : (
+                <button 
+                  onClick={() => setCurrentView('admin')}
+                  className="flex items-center gap-1 text-slate-400 hover:text-blue-400 transition-colors font-medium"
+                  title="Editorial Staff Sign In"
+                >
+                  <Lock className="w-3.5 h-3.5 text-slate-500" />
+                  <span>Staff Portal</span>
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -288,16 +352,48 @@ export const Header: React.FC = () => {
                 <span>Featured Business Leaders</span>
                 <Sparkles className="w-4 h-4 text-amber-400" />
               </button>
-              <button
-                onClick={() => {
-                  setCurrentView('admin');
-                  setIsMobileMenuOpen(false);
-                }}
-                className="w-full text-left px-3 py-2 rounded-md text-sm font-medium text-blue-400 hover:bg-slate-800 flex items-center justify-between"
-              >
-                <span>Admin Editorial Portal</span>
-                <ShieldCheck className="w-4 h-4 text-blue-400" />
-              </button>
+              {isAdminLoggedIn ? (
+                <>
+                  <button
+                    onClick={() => {
+                      setCurrentView('admin');
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="w-full text-left px-3 py-2 rounded-md text-sm font-medium text-amber-300 hover:bg-slate-800 flex items-center justify-between"
+                  >
+                    <div className="flex items-center gap-2">
+                      <ShieldCheck className="w-4 h-4 text-amber-400" />
+                      <span>Admin Desk ({adminUser?.name})</span>
+                    </div>
+                    <span className="text-[10px] bg-amber-400/20 text-amber-300 px-2 py-0.5 rounded">Active</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      logoutAdmin();
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="w-full text-left px-3 py-2 rounded-md text-sm font-medium text-rose-400 hover:bg-slate-800 flex items-center justify-between"
+                  >
+                    <span>Log Out of Admin</span>
+                    <LogOut className="w-4 h-4 text-rose-400" />
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={() => {
+                    setCurrentView('admin');
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="w-full text-left px-3 py-2 rounded-md text-sm font-medium text-slate-300 hover:bg-slate-800 flex items-center justify-between"
+                >
+                  <div className="flex items-center gap-2">
+                    <Lock className="w-4 h-4 text-slate-400" />
+                    <span>Staff & Newsroom Portal</span>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-slate-500" />
+                </button>
+              )}
               <button
                 onClick={() => {
                   setIsNewsletterModalOpen(true);

@@ -120,6 +120,16 @@ export interface NewsletterSubscriber {
   status: 'active' | 'unsubscribed';
 }
 
+export interface AdminUser {
+  id: string;
+  name: string;
+  email: string;
+  role: 'Editor-in-Chief' | 'Senior Markets Editor' | 'Managing Editor' | 'Newsroom Admin';
+  avatar: string;
+  department: string;
+  lastLogin?: string;
+}
+
 export type ViewMode = 
   | 'home'
   | 'article'

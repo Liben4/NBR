@@ -8,7 +8,8 @@ import {
   BusinessLeader, 
   Comment, 
   NewsletterSubscriber, 
-  Author 
+  Author,
+  AdminUser
 } from '../types';
 import { 
   INITIAL_ARTICLES, 
@@ -21,10 +22,55 @@ import {
   INITIAL_SUBSCRIBERS 
 } from '../data/seedData';
 
+export const DEFAULT_ADMIN_ACCOUNTS: { [email: string]: { password: string; user: AdminUser } } = {
+  'editor@negarit.et': {
+    password: 'admin',
+    user: {
+      id: 'admin-1',
+      name: 'Dr. Brook Taye',
+      email: 'editor@negarit.et',
+      role: 'Editor-in-Chief',
+      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80',
+      department: 'Executive Editorial Board',
+      lastLogin: 'Just now'
+    }
+  },
+  'markets@negarit.et': {
+    password: 'admin',
+    user: {
+      id: 'admin-2',
+      name: 'Bethlehem Tadesse',
+      email: 'markets@negarit.et',
+      role: 'Senior Markets Editor',
+      avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300&auto=format&fit=crop&q=80',
+      department: 'Financial & Capital Markets',
+      lastLogin: 'Just now'
+    }
+  },
+  'admin@negarit.et': {
+    password: 'admin',
+    user: {
+      id: 'admin-3',
+      name: 'Kidus Mengistu',
+      email: 'admin@negarit.et',
+      role: 'Newsroom Admin',
+      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&auto=format&fit=crop&q=80',
+      department: 'Newsroom Operations & Publishing',
+      lastLogin: 'Just now'
+    }
+  }
+};
+
 interface AppContextType {
   // Theme
   isDarkMode: boolean;
   toggleTheme: () => void;
+
+  // Admin Auth & Separation
+  adminUser: AdminUser | null;
+  isAdminLoggedIn: boolean;
+  loginAdmin: (email: string, password: string, remember?: boolean) => { success: boolean; message?: string };
+  logoutAdmin: () => void;
 
   // Navigation & Views
   currentView: ViewMode;
@@ -61,6 +107,7 @@ interface AppContextType {
   breakingNews: string[];
   marketIndicators: MarketIndicator[];
   currencies: CurrencyRate[];
+  updateCurrencyRate: (code: string, buying: number, selling: number, change: number) => void;
   leaders: BusinessLeader[];
   comments: Comment[];
 
@@ -99,6 +146,21 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [isBookmarksOpen, setIsBookmarksOpen] = useState<boolean>(false);
   const [isNewsletterModalOpen, setIsNewsletterModalOpen] = useState<boolean>(false);
 
+  // Admin Authentication & Session
+  const [adminUser, setAdminUser] = useState<AdminUser | null>(() => {
+    const saved = localStorage.getItem('negarit_admin_session');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    return null;
+  });
+
+  const isAdminLoggedIn = !!adminUser;
+
   // Persistence
   const [articles, setArticles] = useState<Article[]>(() => {
     const saved = localStorage.getItem('negarit_articles');
@@ -111,7 +173,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [authors] = useState<Author[]>(INITIAL_AUTHORS);
   const [breakingNews] = useState<string[]>(INITIAL_BREAKING_NEWS);
   const [marketIndicators] = useState<MarketIndicator[]>(INITIAL_MARKET_INDICATORS);
-  const [currencies] = useState<CurrencyRate[]>(INITIAL_CURRENCIES);
+  const [currencies, setCurrencies] = useState<CurrencyRate[]>(() => {
+    const saved = localStorage.getItem('negarit_currencies');
+    if (saved) {
+      try { return JSON.parse(saved); } catch (e) { console.error(e); }
+    }
+    return INITIAL_CURRENCIES;
+  });
   const [leaders] = useState<BusinessLeader[]>(INITIAL_LEADERS);
 
   const [bookmarkedIds, setBookmarkedIds] = useState<string[]>(() => {
@@ -167,8 +235,73 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     localStorage.setItem('negarit_subscribers', JSON.stringify(subscribers));
   }, [subscribers]);
 
+  useEffect(() => {
+    localStorage.setItem('negarit_currencies', JSON.stringify(currencies));
+  }, [currencies]);
+
   const toggleTheme = () => {
     setIsDarkMode(prev => !prev);
+  };
+
+  const loginAdmin = (email: string, pass: string, remember: boolean = true): { success: boolean; message?: string } => {
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanPass = pass.trim();
+
+    // Check predefined executive accounts first
+    const predefined = DEFAULT_ADMIN_ACCOUNTS[cleanEmail];
+    if (predefined) {
+      if (predefined.password === cleanPass || cleanPass === 'admin' || cleanPass === 'admin123' || cleanPass === 'negarit2026') {
+        const loggedUser: AdminUser = {
+          ...predefined.user,
+          lastLogin: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) + ', Today'
+        };
+        setAdminUser(loggedUser);
+        if (remember) {
+          localStorage.setItem('negarit_admin_session', JSON.stringify(loggedUser));
+        }
+        showToast(`Welcome back, ${loggedUser.name} (${loggedUser.role})`);
+        return { success: true };
+      }
+      return { success: false, message: 'Invalid editorial keycard / password. Use "admin" or "negarit2026".' };
+    }
+
+    // Allow custom admin credentials if password matches standard admin keys or email has valid pattern
+    if (cleanEmail.includes('@') && (cleanPass === 'admin' || cleanPass === 'admin123' || cleanPass === 'negarit2026' || cleanPass.length >= 4)) {
+      const generatedName = cleanEmail.split('@')[0].replace(/[._-]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+      const customUser: AdminUser = {
+        id: `admin-custom-${Date.now()}`,
+        name: generatedName || 'Editorial Staff Member',
+        email: cleanEmail,
+        role: cleanEmail.includes('chief') ? 'Editor-in-Chief' : cleanEmail.includes('market') ? 'Senior Markets Editor' : 'Newsroom Admin',
+        avatar: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(cleanEmail)}`,
+        department: 'Editorial Desk',
+        lastLogin: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) + ', Today'
+      };
+      setAdminUser(customUser);
+      if (remember) {
+        localStorage.setItem('negarit_admin_session', JSON.stringify(customUser));
+      }
+      showToast(`Authenticated as ${customUser.name} (${customUser.role})`);
+      return { success: true };
+    }
+
+    return { 
+      success: false, 
+      message: 'Access denied. Check your corporate email and credential passphrase.' 
+    };
+  };
+
+  const logoutAdmin = () => {
+    setAdminUser(null);
+    localStorage.removeItem('negarit_admin_session');
+    showToast('Editorial session terminated. Logged out of Admin Desk.');
+    setCurrentView('home');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const updateCurrencyRate = (code: string, buying: number, selling: number, change: number) => {
+    setCurrencies(prev => prev.map(c => c.code === code ? { ...c, buying, selling, change, isPositive: change >= 0 } : c));
+    showToast(`Updated official NBE ${code}/ETB foreign exchange rate`);
   };
 
   const showToast = (msg: string) => {
@@ -289,6 +422,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       value={{
         isDarkMode,
         toggleTheme,
+        adminUser,
+        isAdminLoggedIn,
+        loginAdmin,
+        logoutAdmin,
         currentView,
         setCurrentView,
         selectedCategory,
@@ -315,6 +452,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         breakingNews,
         marketIndicators,
         currencies,
+        updateCurrencyRate,
         leaders,
         comments,
         addArticle,
