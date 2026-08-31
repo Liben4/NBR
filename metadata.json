@@ -1,0 +1,6 @@
+{
+  "name": "NEGARIT BUSINESS REVIEW",
+  "description": "Ethiopia's premier business, economy, finance, and investment news platform — Navigating Business Dynamics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
