@@ -215,6 +215,37 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     localStorage.setItem('negarit_currencies', JSON.stringify(currencies));
   }, [currencies]);
 
+  // Fetch initial data from Cloud SQL backend
+  useEffect(() => {
+    const fetchCloudSqlData = async () => {
+      try {
+        const [artRes, currRes, subRes, comRes] = await Promise.allSettled([
+          fetch('/api/articles').then(r => r.ok ? r.json() : null),
+          fetch('/api/currencies').then(r => r.ok ? r.json() : null),
+          fetch('/api/subscribers').then(r => r.ok ? r.json() : null),
+          fetch('/api/comments').then(r => r.ok ? r.json() : null),
+        ]);
+
+        if (artRes.status === 'fulfilled' && Array.isArray(artRes.value) && artRes.value.length > 0) {
+          setArticles(artRes.value);
+        }
+        if (currRes.status === 'fulfilled' && Array.isArray(currRes.value) && currRes.value.length > 0) {
+          setCurrencies(currRes.value);
+        }
+        if (subRes.status === 'fulfilled' && Array.isArray(subRes.value) && subRes.value.length > 0) {
+          setSubscribers(subRes.value);
+        }
+        if (comRes.status === 'fulfilled' && Array.isArray(comRes.value) && comRes.value.length > 0) {
+          setComments(comRes.value);
+        }
+      } catch (e) {
+        console.warn('Initial Cloud SQL synchronization completed with local cache fallback:', e);
+      }
+    };
+
+    fetchCloudSqlData();
+  }, []);
+
   const toggleTheme = () => {
     setIsDarkMode(prev => !prev);
   };
@@ -262,6 +293,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const updateCurrencyRate = (code: string, buying: number, selling: number, change: number) => {
     setCurrencies(prev => prev.map(c => c.code === code ? { ...c, buying, selling, change, isPositive: change >= 0 } : c));
     showToast(`Updated official NBE ${code}/ETB foreign exchange rate`);
+    fetch(`/api/currencies/${code}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ buying, selling, change })
+    }).catch(err => console.warn('Cloud SQL currency update warning:', err));
   };
 
   const showToast = (msg: string) => {
@@ -311,6 +347,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
     setSubscribers(prev => [newSub, ...prev]);
     showToast('Subscribed successfully. Welcome to Negarit Executive Intelligence.');
+    fetch('/api/subscribers', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, name, interests })
+    }).catch(err => console.warn('Cloud SQL subscriber sync warning:', err));
     return true;
   };
 
@@ -323,6 +364,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
     setArticles(prev => [article, ...prev]);
     showToast(`Article "${article.title.slice(0, 30)}..." published successfully`);
+    fetch('/api/articles', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(article)
+    }).catch(err => console.warn('Cloud SQL article sync warning:', err));
   };
 
   const updateArticle = (id: string, updatedFields: Partial<Article>) => {
@@ -331,6 +377,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setSelectedArticle(prev => prev ? { ...prev, ...updatedFields } : null);
     }
     showToast('Article updated successfully');
+    fetch(`/api/articles/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updatedFields)
+    }).catch(err => console.warn('Cloud SQL article update warning:', err));
   };
 
   const deleteArticle = (id: string) => {
@@ -340,6 +391,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setCurrentView('home');
     }
     showToast('Article removed from publication');
+    fetch(`/api/articles/${id}`, {
+      method: 'DELETE'
+    }).catch(err => console.warn('Cloud SQL article delete warning:', err));
   };
 
   const addComment = (articleId: string, authorName: string, content: string, role?: string) => {
@@ -356,6 +410,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
     setComments(prev => [newComment, ...prev]);
     showToast('Comment submitted for publication');
+    fetch('/api/comments', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ articleId, authorName, authorRole: role || 'Verified Reader', content })
+    }).catch(err => console.warn('Cloud SQL comment sync warning:', err));
   };
 
   const likeComment = (commentId: string) => {
@@ -375,6 +434,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const deleteComment = (commentId: string) => {
     setComments(prev => prev.filter(c => c.id !== commentId));
     showToast('Comment removed');
+    fetch(`/api/comments/${commentId}`, {
+      method: 'DELETE'
+    }).catch(err => console.warn('Cloud SQL comment delete warning:', err));
   };
 
   return (
