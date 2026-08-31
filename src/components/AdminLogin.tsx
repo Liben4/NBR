@@ -133,7 +133,7 @@ export const AdminLogin: React.FC = () => {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-xs font-semibold text-slate-300 mb-1.5 uppercase tracking-wider">
-                Corporate Staff Email
+                Administrator Email
               </label>
               <div className="relative">
                 <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -141,7 +141,7 @@ export const AdminLogin: React.FC = () => {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="editor@negarit.et"
+                  placeholder="liben457@gmail.com"
                   className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition-colors"
                   required
                 />
@@ -151,9 +151,9 @@ export const AdminLogin: React.FC = () => {
             <div>
               <div className="flex items-center justify-between mb-1.5">
                 <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
-                  Access Passphrase / Key
+                  Access Passphrase / Password
                 </label>
-                <span className="text-[11px] text-slate-400">Demo Key: <span className="text-amber-400 font-mono font-bold">admin</span></span>
+                <span className="text-[11px] text-slate-400">Passphrase: <span className="text-amber-400 font-mono font-bold">Liben@2026NBR</span></span>
               </div>
               <div className="relative">
                 <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -161,8 +161,8 @@ export const AdminLogin: React.FC = () => {
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••••••"
-                  className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition-colors"
+                  placeholder="Liben@2026NBR"
+                  className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition-colors font-mono"
                   required
                 />
                 <button
@@ -184,18 +184,8 @@ export const AdminLogin: React.FC = () => {
                   onChange={(e) => setRememberMe(e.target.checked)}
                   className="rounded border-slate-700 bg-slate-950 text-blue-600 focus:ring-0"
                 />
-                <span>Maintain session on this device</span>
+                <span>Maintain active session on this device</span>
               </label>
-
-              <button
-                type="button"
-                onClick={() => {
-                  showToast('Demo Passphrases: "admin" or "negarit2026"');
-                }}
-                className="text-amber-400/90 hover:text-amber-300 transition-colors hover:underline"
-              >
-                Forgot keycard?
-              </button>
             </div>
 
             {/* Submit Button */}
@@ -207,7 +197,7 @@ export const AdminLogin: React.FC = () => {
               {isLoading ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  <span>Verifying Editorial Credentials...</span>
+                  <span>Verifying Administrator Credentials...</span>
                 </>
               ) : (
                 <>
@@ -218,50 +208,37 @@ export const AdminLogin: React.FC = () => {
             </button>
           </form>
 
-          {/* Quick Demo Pre-fills */}
+          {/* 1-Click Quick Fill for Admin */}
           <div className="mt-8 pt-6 border-t border-slate-800/80">
             <div className="flex items-center justify-between mb-3">
               <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                <span>Instant Demo Staff Accounts</span>
+                <span>Authorized Admin Identity</span>
               </span>
               <span className="text-[10px] text-slate-500">1-Click Sign In</span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-              <button
-                type="button"
-                onClick={() => handleQuickLogin('editor@negarit.et', 'admin')}
-                className="p-2.5 rounded-xl bg-slate-950 hover:bg-slate-800/90 border border-slate-800 hover:border-amber-400/40 text-left transition-all group"
-              >
-                <div className="text-[11px] font-bold text-slate-200 group-hover:text-amber-300 truncate">
-                  Dr. Brook Taye
+            <button
+              type="button"
+              onClick={() => handleQuickLogin('liben457@gmail.com', 'Liben@2026NBR')}
+              className="w-full p-3.5 rounded-2xl bg-slate-950 hover:bg-slate-800/90 border border-slate-800 hover:border-amber-400/60 text-left transition-all group flex items-center justify-between"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-amber-400/20 border border-amber-400/40 flex items-center justify-center font-bold text-amber-300 text-sm font-editorial">
+                  L
                 </div>
-                <div className="text-[10px] text-slate-400 truncate">Editor-in-Chief</div>
-              </button>
+                <div>
+                  <div className="text-xs font-bold text-slate-200 group-hover:text-amber-300">
+                    Liben (Chief Administrator & Editor)
+                  </div>
+                  <div className="text-[11px] text-slate-400 font-mono">liben457@gmail.com</div>
+                </div>
+              </div>
 
-              <button
-                type="button"
-                onClick={() => handleQuickLogin('markets@negarit.et', 'admin')}
-                className="p-2.5 rounded-xl bg-slate-950 hover:bg-slate-800/90 border border-slate-800 hover:border-amber-400/40 text-left transition-all group"
-              >
-                <div className="text-[11px] font-bold text-slate-200 group-hover:text-amber-300 truncate">
-                  Bethlehem T.
-                </div>
-                <div className="text-[10px] text-slate-400 truncate">Senior Markets Editor</div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickLogin('admin@negarit.et', 'admin')}
-                className="p-2.5 rounded-xl bg-slate-950 hover:bg-slate-800/90 border border-slate-800 hover:border-amber-400/40 text-left transition-all group"
-              >
-                <div className="text-[11px] font-bold text-slate-200 group-hover:text-amber-300 truncate">
-                  Kidus Mengistu
-                </div>
-                <div className="text-[10px] text-slate-400 truncate">Newsroom Admin</div>
-              </button>
-            </div>
+              <span className="text-xs font-bold text-blue-400 group-hover:text-amber-400 group-hover:translate-x-0.5 transition-all">
+                Sign In →
+              </span>
+            </button>
           </div>
 
           {/* Editorial Security Notice */}

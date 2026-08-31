@@ -23,39 +23,15 @@ import {
 } from '../data/seedData';
 
 export const DEFAULT_ADMIN_ACCOUNTS: { [email: string]: { password: string; user: AdminUser } } = {
-  'editor@negarit.et': {
-    password: 'admin',
+  'liben457@gmail.com': {
+    password: 'Liben@2026NBR',
     user: {
-      id: 'admin-1',
-      name: 'Dr. Brook Taye',
-      email: 'editor@negarit.et',
+      id: 'admin-liben',
+      name: 'Liben',
+      email: 'liben457@gmail.com',
       role: 'Editor-in-Chief',
       avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80',
-      department: 'Executive Editorial Board',
-      lastLogin: 'Just now'
-    }
-  },
-  'markets@negarit.et': {
-    password: 'admin',
-    user: {
-      id: 'admin-2',
-      name: 'Bethlehem Tadesse',
-      email: 'markets@negarit.et',
-      role: 'Senior Markets Editor',
-      avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300&auto=format&fit=crop&q=80',
-      department: 'Financial & Capital Markets',
-      lastLogin: 'Just now'
-    }
-  },
-  'admin@negarit.et': {
-    password: 'admin',
-    user: {
-      id: 'admin-3',
-      name: 'Kidus Mengistu',
-      email: 'admin@negarit.et',
-      role: 'Newsroom Admin',
-      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&auto=format&fit=crop&q=80',
-      department: 'Newsroom Operations & Publishing',
+      department: 'Executive Editorial & Operations Board',
       lastLogin: 'Just now'
     }
   }
@@ -247,47 +223,31 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const cleanEmail = email.trim().toLowerCase();
     const cleanPass = pass.trim();
 
-    // Check predefined executive accounts first
-    const predefined = DEFAULT_ADMIN_ACCOUNTS[cleanEmail];
-    if (predefined) {
-      if (predefined.password === cleanPass || cleanPass === 'admin' || cleanPass === 'admin123' || cleanPass === 'negarit2026') {
-        const loggedUser: AdminUser = {
-          ...predefined.user,
-          lastLogin: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) + ', Today'
-        };
-        setAdminUser(loggedUser);
-        if (remember) {
-          localStorage.setItem('negarit_admin_session', JSON.stringify(loggedUser));
-        }
-        showToast(`Welcome back, ${loggedUser.name} (${loggedUser.role})`);
-        return { success: true };
-      }
-      return { success: false, message: 'Invalid editorial keycard / password. Use "admin" or "negarit2026".' };
-    }
-
-    // Allow custom admin credentials if password matches standard admin keys or email has valid pattern
-    if (cleanEmail.includes('@') && (cleanPass === 'admin' || cleanPass === 'admin123' || cleanPass === 'negarit2026' || cleanPass.length >= 4)) {
-      const generatedName = cleanEmail.split('@')[0].replace(/[._-]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-      const customUser: AdminUser = {
-        id: `admin-custom-${Date.now()}`,
-        name: generatedName || 'Editorial Staff Member',
-        email: cleanEmail,
-        role: cleanEmail.includes('chief') ? 'Editor-in-Chief' : cleanEmail.includes('market') ? 'Senior Markets Editor' : 'Newsroom Admin',
-        avatar: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(cleanEmail)}`,
-        department: 'Editorial Desk',
+    if (cleanEmail === 'liben457@gmail.com' && cleanPass === 'Liben@2026NBR') {
+      const loggedUser: AdminUser = {
+        id: 'admin-liben',
+        name: 'Liben',
+        email: 'liben457@gmail.com',
+        role: 'Editor-in-Chief',
+        avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80',
+        department: 'Executive Editorial & Operations Board',
         lastLogin: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) + ', Today'
       };
-      setAdminUser(customUser);
+      setAdminUser(loggedUser);
       if (remember) {
-        localStorage.setItem('negarit_admin_session', JSON.stringify(customUser));
+        localStorage.setItem('negarit_admin_session', JSON.stringify(loggedUser));
       }
-      showToast(`Authenticated as ${customUser.name} (${customUser.role})`);
+      showToast(`Welcome back, ${loggedUser.name} (${loggedUser.role})`);
       return { success: true };
+    }
+
+    if (cleanEmail !== 'liben457@gmail.com') {
+      return { success: false, message: 'Unauthorized administrator email address. Access is restricted to liben457@gmail.com.' };
     }
 
     return { 
       success: false, 
-      message: 'Access denied. Check your corporate email and credential passphrase.' 
+      message: 'Invalid password for liben457@gmail.com. Please check your credentials.' 
     };
   };
 
