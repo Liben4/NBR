@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: negarit-business-review
+    env: node
+    plan: free
+    region: frankfurt
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: negarit-postgres
+          property: connectionString
+      - key: DATABASE_SSL
+        value: "true"
+
+databases:
+  - name: negarit-postgres
+    databaseName: negarit
+    user: negarit_admin
+    plan: free
+    region: frankfurt
