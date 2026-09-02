@@ -44,10 +44,10 @@ export const Footer: React.FC = () => {
       {/* Main Footer Container */}
       <div className="max-w-7xl mx-auto px-4 sm:px-8 py-12 lg:py-16">
         
-        {/* Top Grid: Brand, Social Channels & Categories */}
+        {/* Top Grid: Brand, Categories & Intelligence Portals */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-12 pb-12 border-b border-slate-800">
           
-          {/* Column 1: Brand & Official Channels (5 cols) */}
+          {/* Column 1: Brand & Bureau (5 cols) */}
           <div className="lg:col-span-5 space-y-4">
             {/* Logo */}
             <div 
@@ -74,14 +74,6 @@ export const Footer: React.FC = () => {
                 <Globe className="w-3.5 h-3.5 text-amber-400 shrink-0" />
                 <span>Horn of Africa Regional Bureau • Frequency: Daily</span>
               </div>
-            </div>
-
-            {/* Social Media Follow Grid (LinkedIn, Facebook, Telegram, X, WhatsApp) */}
-            <div className="pt-2">
-              <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-300 mb-2">
-                Follow Negarit Business Review
-              </h4>
-              <SocialLinks variant="footer-grid" />
             </div>
           </div>
 
@@ -172,7 +164,7 @@ export const Footer: React.FC = () => {
             {/* Newsletter quick box in footer */}
             <div className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 mt-4">
               <p className="text-[11px] text-slate-300 font-semibold mb-2">
-                Join our 28,000+ subscriber corporate network.
+                Join our corporate executive network.
               </p>
               <button
                 onClick={() => setIsNewsletterModalOpen(true)}
@@ -184,6 +176,22 @@ export const Footer: React.FC = () => {
             </div>
           </div>
 
+        </div>
+
+        {/* Dedicated Centered Social Media Section Under Footers */}
+        <div className="py-10 border-b border-slate-800 flex flex-col items-center justify-center text-center">
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <span className="h-px w-8 bg-amber-500/40" />
+            <h4 className="text-xs font-brand font-bold uppercase tracking-widest text-slate-200">
+              Follow Negarit Business Review
+            </h4>
+            <span className="h-px w-8 bg-amber-500/40" />
+          </div>
+          <p className="text-xs text-slate-400 mb-6 max-w-lg">
+            Connect across our verified official channels for real-time macroeconomic updates, NBE circulars, and executive briefings.
+          </p>
+
+          <SocialLinks variant="footer-centered" />
         </div>
 
         {/* Bottom Copyright & Back to Top Bar */}

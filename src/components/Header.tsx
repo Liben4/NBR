@@ -75,7 +75,7 @@ export const Header: React.FC = () => {
   return (
     <header className="w-full flex flex-col border-b border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-200">
       
-      {/* 0. ADMIN ACTIVE STATUS BANNER (Rendered only when logged in as Admin) */}
+      {/* 0. ADMIN ACTIVE STATUS BANNER (Visible when logged in as Admin) */}
       {isAdminLoggedIn && adminUser && (
         <div className="w-full bg-gradient-to-r from-amber-500/10 via-blue-600/10 to-amber-500/10 dark:from-blue-950 dark:via-slate-900 dark:to-amber-950/40 text-xs border-b border-amber-500/30 py-1.5 px-4 sm:px-8">
           <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">

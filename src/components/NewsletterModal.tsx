@@ -79,7 +79,7 @@ export const NewsletterModal: React.FC = () => {
             </h3>
 
             <p className="text-xs text-slate-600 dark:text-slate-400 mt-1 mb-5">
-              Authoritative business insights, macroeconomic indicators, and investment analysis delivered to 28,000+ senior leaders.
+              Authoritative business insights, macroeconomic indicators, and investment analysis delivered directly to your inbox.
             </p>
 
             <form onSubmit={handleSubmit} className="space-y-4">

@@ -350,8 +350,8 @@ export const AdminDashboard: React.FC = () => {
             <span className="text-[11px] font-semibold uppercase tracking-wider">Subscribers</span>
             <Users className="w-4 h-4 text-purple-600 dark:text-purple-400" />
           </div>
-          <div className="text-2xl font-bold text-slate-900 dark:text-slate-100 font-sans">{subscribers.length + 28400}</div>
-          <span className="text-[11px] text-purple-600 dark:text-purple-400 font-medium">{subscribers.length} live records</span>
+          <div className="text-2xl font-bold text-slate-900 dark:text-slate-100 font-sans">{subscribers.length}</div>
+          <span className="text-[11px] text-purple-600 dark:text-purple-400 font-medium">Live subscriber database</span>
         </div>
 
         <div className="p-4 rounded-2xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 shadow-sm">
@@ -899,7 +899,7 @@ export const AdminDashboard: React.FC = () => {
             <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <span className="w-2 h-2 rounded-full bg-purple-500" />
-                <span className="text-slate-800 dark:text-slate-200">Corporate subscriber digest dispatched to 28,400+ readers</span>
+                <span className="text-slate-800 dark:text-slate-200">Corporate subscriber digest dispatched to readers</span>
               </div>
               <span className="text-slate-500">Today, 06:00 AM</span>
             </div>
@@ -988,7 +988,7 @@ export const AdminDashboard: React.FC = () => {
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                   <span className="text-xs font-bold text-emerald-700 dark:text-emerald-300 font-mono">Connected & Synchronized</span>
                 </div>
-                <span className="text-[10px] text-slate-500 mt-1 block">PostgreSQL / Cloud SQL / Render API Active</span>
+                <span className="text-[10px] text-slate-500 mt-1 block">Cloud SQL PostgreSQL Backend Active</span>
               </div>
 
               <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800">

@@ -14,7 +14,6 @@ export interface SocialPlatform {
   id: string;
   name: string;
   handle: string;
-  followers?: string;
   url: string;
   brandColor: string;
   bgLight: string;
@@ -88,7 +87,6 @@ export const SOCIAL_PLATFORMS: SocialPlatform[] = [
     id: 'linkedin',
     name: 'LinkedIn',
     handle: '@negarit-business-review',
-    followers: '28.4K Leaders',
     url: 'https://www.linkedin.com/company/negarit-business-review',
     brandColor: '#0A66C2',
     bgLight: 'bg-[#0A66C2]/10 hover:bg-[#0A66C2]/20 border-[#0A66C2]/30',
@@ -101,7 +99,6 @@ export const SOCIAL_PLATFORMS: SocialPlatform[] = [
     id: 'telegram',
     name: 'Telegram',
     handle: '@NegaritReview',
-    followers: '52.1K Subscribers',
     url: 'https://t.me/negaritbusinessreview',
     brandColor: '#24A1DE',
     bgLight: 'bg-[#24A1DE]/10 hover:bg-[#24A1DE]/20 border-[#24A1DE]/30',
@@ -114,7 +111,6 @@ export const SOCIAL_PLATFORMS: SocialPlatform[] = [
     id: 'facebook',
     name: 'Facebook',
     handle: 'Negarit Business Review',
-    followers: '45.8K Followers',
     url: 'https://www.facebook.com/negaritbusinessreview',
     brandColor: '#1877F2',
     bgLight: 'bg-[#1877F2]/10 hover:bg-[#1877F2]/20 border-[#1877F2]/30',
@@ -127,7 +123,6 @@ export const SOCIAL_PLATFORMS: SocialPlatform[] = [
     id: 'x',
     name: 'X (Twitter)',
     handle: '@NegaritReview',
-    followers: '31.9K Followers',
     url: 'https://x.com/negaritreview',
     brandColor: '#000000',
     bgLight: 'bg-slate-900/10 hover:bg-slate-900/20 border-slate-900/30',
@@ -140,19 +135,18 @@ export const SOCIAL_PLATFORMS: SocialPlatform[] = [
     id: 'whatsapp',
     name: 'WhatsApp',
     handle: 'Negarit Executive Channel',
-    followers: '19.6K Members',
     url: 'https://whatsapp.com/channel/negaritbusinessreview',
     brandColor: '#25D366',
     bgLight: 'bg-[#25D366]/10 hover:bg-[#25D366]/20 border-[#25D366]/30',
     bgDark: 'bg-[#25D366]/20 hover:bg-[#25D366]/30 border-[#25D366]/40',
     textColor: 'text-[#16A34A] dark:text-[#4ADE80]',
-    description: 'Direct 07:30 AM morning executive digest & currency bulletins',
+    description: 'Direct morning executive digest & currency bulletins',
     icon: SocialIcons.WhatsApp,
   },
 ];
 
 interface SocialLinksProps {
-  variant?: 'header-top' | 'header-compact' | 'footer-grid' | 'share-bar' | 'sidebar-card';
+  variant?: 'header-top' | 'header-compact' | 'footer-grid' | 'footer-centered' | 'share-bar' | 'sidebar-card';
   title?: string;
   shareData?: { title: string; url?: string; summary?: string };
   className?: string;
@@ -240,7 +234,7 @@ export const SocialLinks: React.FC<SocialLinksProps> = ({
             <Sparkles className="w-3.5 h-3.5 text-amber-500" />
             <span>Follow Negarit Official</span>
           </span>
-          <span className="text-[10px] text-slate-400 font-mono">175K+ Combined Reach</span>
+          <span className="text-[10px] text-slate-400 font-mono">Official Channels</span>
         </div>
         <div className="grid grid-cols-5 gap-2">
           {SOCIAL_PLATFORMS.map((platform) => {
@@ -267,7 +261,44 @@ export const SocialLinks: React.FC<SocialLinksProps> = ({
     );
   }
 
-  // 3. FOOTER GRID (High-impact executive community cards)
+  // 3. FOOTER CENTERED (Centered horizontal/grid layout under the footer)
+  if (variant === 'footer-centered') {
+    return (
+      <div className={`w-full flex flex-col items-center justify-center ${className}`}>
+        <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3.5 max-w-4xl mx-auto">
+          {SOCIAL_PLATFORMS.map((platform) => {
+            const Icon = platform.icon;
+            return (
+              <a
+                key={platform.id}
+                href={platform.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => handleShareClick(platform, e)}
+                className="group inline-flex items-center gap-2.5 px-4 py-2 rounded-xl border border-slate-700/80 hover:border-amber-400/80 bg-slate-950/80 hover:bg-slate-800 text-slate-300 hover:text-white transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5"
+                title={`Follow Negarit Business Review on ${platform.name}`}
+              >
+                <div className="p-1 rounded-lg bg-slate-900 border border-slate-800 group-hover:border-amber-500/40 transition-colors">
+                  <Icon className={`w-4 h-4 ${platform.textColor}`} />
+                </div>
+                <div className="text-left">
+                  <span className="text-xs font-bold text-slate-200 group-hover:text-amber-400 block leading-tight">
+                    {platform.name}
+                  </span>
+                  <span className="text-[10px] text-slate-400 block leading-tight font-mono">
+                    {platform.handle}
+                  </span>
+                </div>
+                <ExternalLink className="w-3 h-3 text-slate-500 group-hover:text-amber-400 transition-colors ml-1" />
+              </a>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+
+  // 4. FOOTER GRID (Executive community cards)
   if (variant === 'footer-grid') {
     return (
       <div className={`space-y-4 ${className}`}>
@@ -318,12 +349,10 @@ export const SocialLinks: React.FC<SocialLinksProps> = ({
                   </p>
                 </div>
 
-                <div className="pt-3 mt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[11px]">
-                  <span className="font-semibold text-slate-700 dark:text-slate-300">
-                    {platform.followers}
-                  </span>
-                  <span className="text-amber-600 dark:text-amber-400 font-bold group-hover:underline">
-                    Follow →
+                <div className="pt-3 mt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end text-[11px]">
+                  <span className="text-amber-600 dark:text-amber-400 font-bold group-hover:underline flex items-center gap-1">
+                    <span>Follow</span>
+                    <span>→</span>
                   </span>
                 </div>
               </a>
@@ -334,7 +363,7 @@ export const SocialLinks: React.FC<SocialLinksProps> = ({
     );
   }
 
-  // 4. SHARE BAR (For Article View with 1-click sharing)
+  // 5. SHARE BAR (For Article View with 1-click sharing)
   if (variant === 'share-bar') {
     return (
       <div className={`flex flex-wrap items-center gap-2 ${className}`}>
@@ -360,7 +389,7 @@ export const SocialLinks: React.FC<SocialLinksProps> = ({
     );
   }
 
-  // 5. SIDEBAR CARD (Prominent community widget)
+  // 6. SIDEBAR CARD (Prominent community widget)
   return (
     <div className={`p-5 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/90 shadow-sm ${className}`}>
       <div className="flex items-center gap-2 mb-2">
@@ -398,7 +427,7 @@ export const SocialLinks: React.FC<SocialLinksProps> = ({
                     {platform.name}
                   </span>
                   <span className="text-[10px] text-slate-500 dark:text-slate-400 block font-mono">
-                    {platform.followers}
+                    {platform.handle}
                   </span>
                 </div>
               </div>
