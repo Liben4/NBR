@@ -1,67 +1,157 @@
-<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg width="400" height="400" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stopColor="#F59E0B" />
+    <!-- Gold Gradient matching the NBR official palette -->
+    <linearGradient id="nbrGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stopColor="#F5A623" />
+      <stop offset="50%" stopColor="#E5941E" />
       <stop offset="100%" stopColor="#D97706" />
     </linearGradient>
-    <linearGradient id="navyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stopColor="#1E3A8A" />
-      <stop offset="100%" stopColor="#0A2540" />
+
+    <!-- Deep Navy Palette -->
+    <linearGradient id="nbrNavyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stopColor="#0E274A" />
+      <stop offset="100%" stopColor="#081A36" />
     </linearGradient>
   </defs>
 
-  <!-- Top Arc -->
-  <path
-    d="M 52 70 C 65 35 110 20 148 38 C 165 46 178 60 184 78"
-    stroke="#0A2540"
-    stroke-width="3.5"
-    stroke-linecap="round"
-    fill="none"
-  />
+  <!-- ================= EMBLEM ================= -->
+  <g transform="translate(100, 20)">
+    <!-- Top Arc Orbit -->
+    <path
+      d="M 28 88 C 24 46 62 18 106 18 C 138 18 165 34 178 58"
+      stroke="#0A1E3F"
+      stroke-width="4.5"
+      stroke-linecap="round"
+      fill="none"
+    />
 
-  <!-- Bottom Left Arc -->
-  <path
-    d="M 55 90 C 42 110 46 142 66 160 C 80 172 98 178 118 178"
-    stroke="#0A2540"
-    stroke-width="3.5"
-    stroke-linecap="round"
-    fill="none"
-  />
+    <!-- Bottom Left Arc Orbit -->
+    <path
+      d="M 28 98 C 24 122 34 150 56 168 C 66 176 78 181 92 182"
+      stroke="#0A1E3F"
+      stroke-width="4.5"
+      stroke-linecap="round"
+      fill="none"
+    />
 
-  <!-- N -->
-  <path
-    d="M 46 122 L 57 52 L 72 52 L 95 106 L 95 52 L 108 52 L 97 122 L 82 122 L 59 68 L 59 122 Z"
-    fill="#0A2540"
-  />
+    <!-- Letter 'N' -->
+    <path
+      d="M 24 130 L 36 46 L 54 46 L 80 110 L 80 46 L 96 46 L 82 130 L 65 130 L 40 68 L 40 130 Z"
+      fill="#0A1E3F"
+    />
 
-  <!-- B -->
-  <path
-    d="M 104 52 L 132 52 C 146 52 153 58 153 68 C 153 75 148 81 140 84 C 150 87 155 94 155 104 C 155 116 145 122 130 122 L 104 122 Z M 118 64 L 118 78 L 129 78 C 135 78 139 75 139 71 C 139 67 135 64 129 64 Z M 118 92 L 118 110 L 131 110 C 138 110 142 107 142 101 C 142 95 138 92 131 92 Z"
-    fill="url(#goldGrad)"
-  />
+    <!-- Letter 'B' (Gold with stylized geometric cuts) -->
+    <path
+      d="M 91 46 L 126 46 C 142 46 151 54 151 66 C 151 75 145 82 136 86 C 147 90 153 98 153 110 C 153 123 141 130 124 130 L 91 130 Z M 108 60 L 108 76 L 122 76 C 129 76 134 73 134 68 C 134 63 129 60 122 60 Z M 108 92 L 108 116 L 124 116 C 132 116 136 112 136 104 C 136 96 131 92 124 92 Z"
+      fill="url(#nbrGoldGrad)"
+    />
 
-  <!-- R -->
-  <path
-    d="M 148 52 L 176 52 C 188 52 195 58 195 69 C 195 78 189 85 180 87 L 196 122 L 181 122 L 168 89 L 162 89 L 162 122 L 148 122 Z M 162 64 L 162 77 L 173 77 C 178 77 182 74 182 70 C 182 66 178 64 173 64 Z"
-    fill="#0A2540"
-  />
+    <!-- Letter 'R' -->
+    <path
+      d="M 144 46 L 178 46 C 192 46 201 54 201 67 C 201 78 193 86 182 89 L 202 130 L 184 130 L 168 93 L 160 93 L 160 130 L 144 130 Z M 160 60 L 160 77 L 174 77 C 180 77 184 74 184 69 C 184 64 180 60 174 60 Z"
+      fill="#0A1E3F"
+    />
 
-  <!-- Financial Bars -->
-  <rect x="74" y="145" width="10" height="15" rx="2" fill="#0A2540" />
-  <rect x="88" y="136" width="10" height="24" rx="2" fill="#0A2540" />
-  <rect x="102" y="125" width="10" height="35" rx="2" fill="#0A2540" />
-  <rect x="116" y="112" width="10" height="48" rx="2" fill="#0A2540" />
+    <!-- Financial Bar Chart (Ascending Columns) -->
+    <rect x="68" y="152" width="12" height="18" rx="2" fill="#0A1E3F" />
+    <rect x="85" y="141" width="12" height="29" rx="2" fill="#0A1E3F" />
+    <rect x="102" y="128" width="12" height="42" rx="2" fill="#0A1E3F" />
+    <rect x="119" y="114" width="12" height="56" rx="2" fill="#0A1E3F" />
 
-  <!-- Upward Trend Arrow -->
-  <path
-    d="M 64 154 C 84 174 126 170 162 132"
-    stroke="url(#goldGrad)"
-    stroke-width="6.5"
-    stroke-linecap="round"
-    fill="none"
-  />
-  <polygon
-    points="176,120 152,126 166,140"
-    fill="url(#goldGrad)"
-  />
+    <!-- Upward Sweeping Golden Growth Arrow -->
+    <path
+      d="M 52 165 C 72 190 122 192 166 148"
+      stroke="url(#nbrGoldGrad)"
+      stroke-width="8"
+      stroke-linecap="round"
+      fill="none"
+    />
+    <!-- Arrowhead -->
+    <polygon
+      points="182,133 154,142 170,158"
+      fill="url(#nbrGoldGrad)"
+    />
+  </g>
+
+  <!-- ================= TYPOGRAPHY ================= -->
+  <!-- 1. NEGARIT with Golden Delta 'A' -->
+  <g transform="translate(42, 265)">
+    <!-- N E G -->
+    <text
+      x="0"
+      y="0"
+      font-family="'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif"
+      font-weight="900"
+      font-size="40"
+      letter-spacing="9"
+      fill="#0A1E3F"
+    >NEG</text>
+
+    <!-- Stylized 'A' Chevron with Golden Inner Triangle -->
+    <g transform="translate(137, -35)">
+      <!-- Outer Dark Navy Chevron for 'A' -->
+      <path
+        d="M 20 0 L 40 38 L 29 38 L 20 18 L 11 38 L 0 38 Z"
+        fill="#0A1E3F"
+      />
+      <!-- Golden Solid Triangle Nested in Counter -->
+      <polygon
+        points="20,17 28,33 12,33"
+        fill="url(#nbrGoldGrad)"
+      />
+    </g>
+
+    <!-- R I T -->
+    <text
+      x="184"
+      y="0"
+      font-family="'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif"
+      font-weight="900"
+      font-size="40"
+      letter-spacing="9"
+      fill="#0A1E3F"
+    >RIT</text>
+  </g>
+
+  <!-- 2. BUSINESS REVIEW with Flanking Gold Rules -->
+  <g transform="translate(50, 305)">
+    <!-- Left Rule -->
+    <line x1="0" y1="-5" x2="44" y2="-5" stroke="url(#nbrGoldGrad)" stroke-width="1.8" stroke-linecap="round" />
+    
+    <!-- Text -->
+    <text
+      x="54"
+      y="0"
+      font-family="'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif"
+      font-weight="800"
+      font-size="16.5"
+      letter-spacing="5"
+      fill="url(#nbrGoldGrad)"
+    >BUSINESS REVIEW</text>
+
+    <!-- Right Rule -->
+    <line x1="256" y1="-5" x2="300" y2="-5" stroke="url(#nbrGoldGrad)" stroke-width="1.8" stroke-linecap="round" />
+  </g>
+
+  <!-- 3. Navigating Business Dynamics with Flanking Arrows/Dots -->
+  <g transform="translate(50, 335)">
+    <!-- Left Decorative Line & Dot -->
+    <circle cx="2" cy="-4" r="2" fill="#0A1E3F" />
+    <line x1="6" y1="-4" x2="36" y2="-4" stroke="#0A1E3F" stroke-width="1.2" />
+
+    <!-- Tagline Text -->
+    <text
+      x="46"
+      y="0"
+      font-family="'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif"
+      font-weight="600"
+      font-size="12"
+      letter-spacing="1"
+      fill="#0A1E3F"
+    >Navigating Business Dynamics</text>
+
+    <!-- Right Decorative Line & Dot -->
+    <line x1="264" y1="-4" x2="294" y2="-4" stroke="#0A1E3F" stroke-width="1.2" />
+    <circle cx="298" cy="-4" r="2" fill="#0A1E3F" />
+  </g>
 </svg>
