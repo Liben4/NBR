@@ -112,10 +112,65 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return saved !== null ? saved === 'dark' : true;
   });
 
-  const [currentView, setCurrentView] = useState<ViewMode>('home');
+  // Check initial URL route
+  const getInitialView = (): ViewMode => {
+    if (typeof window !== 'undefined') {
+      const path = window.location.pathname.toLowerCase();
+      const hash = window.location.hash.toLowerCase();
+      const search = window.location.search.toLowerCase();
+      if (path === '/admin' || path.endsWith('/admin') || hash.includes('admin') || search.includes('admin')) {
+        return 'admin';
+      }
+      if (hash.includes('markets') || search.includes('markets')) return 'markets';
+      if (hash.includes('leaders') || search.includes('leaders')) return 'leaders';
+    }
+    return 'home';
+  };
+
+  const [currentView, setCurrentViewInternal] = useState<ViewMode>(getInitialView);
   const [selectedCategory, setSelectedCategory] = useState<CategoryType>('All');
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const [selectedLeader, setSelectedLeader] = useState<BusinessLeader | null>(null);
+
+  const setCurrentView = (view: ViewMode) => {
+    setCurrentViewInternal(view);
+    if (typeof window !== 'undefined') {
+      try {
+        if (view === 'admin') {
+          if (window.location.pathname !== '/admin') {
+            window.history.pushState({ view: 'admin' }, '', '/admin');
+          }
+        } else if (view === 'home') {
+          if (window.location.pathname !== '/' || window.location.hash || window.location.search) {
+            window.history.pushState({ view: 'home' }, '', '/');
+          }
+        }
+      } catch (err) {
+        // Fallback if pushState restricted in sandbox iframe
+      }
+    }
+  };
+
+  // Listen to browser navigation / URL changes
+  useEffect(() => {
+    const handleLocationChange = () => {
+      const path = window.location.pathname.toLowerCase();
+      const hash = window.location.hash.toLowerCase();
+      const search = window.location.search.toLowerCase();
+      if (path === '/admin' || path.endsWith('/admin') || hash.includes('admin') || search.includes('admin')) {
+        setCurrentViewInternal('admin');
+      } else if (path === '/' && !hash && !search) {
+        setCurrentViewInternal('home');
+      }
+    };
+
+    window.addEventListener('popstate', handleLocationChange);
+    window.addEventListener('hashchange', handleLocationChange);
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange);
+      window.removeEventListener('hashchange', handleLocationChange);
+    };
+  }, []);
 
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);

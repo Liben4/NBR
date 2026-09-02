@@ -13,6 +13,7 @@ import {
   Info
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+import { BrandLogo } from './BrandLogo';
 
 export const AdminLogin: React.FC = () => {
   const { loginAdmin, setCurrentView } = useApp();
@@ -84,20 +85,17 @@ export const AdminLogin: React.FC = () => {
 
           {/* Header Brand */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-600 via-blue-700 to-slate-900 border border-blue-400/40 shadow-xl shadow-blue-900/30 mb-3.5">
-              <ShieldCheck className="w-7 h-7 text-amber-400" />
-            </div>
-            
-            <div className="flex items-center justify-center gap-2 text-amber-400 font-brand text-xs uppercase tracking-widest font-bold">
-              <span>Negarit Editorial Desk</span>
+            <div className="mb-4">
+              <BrandLogo variant="full-vertical" size="lg" isDark={true} />
             </div>
 
-            <h1 className="font-editorial text-2xl sm:text-3xl font-bold text-slate-100 mt-1">
-              Staff & Editorial Sign In
-            </h1>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-950 border border-slate-800 text-amber-400 text-xs font-mono font-semibold">
+              <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
+              <span>Restricted Administration Portal</span>
+            </div>
             
-            <p className="text-xs text-slate-400 mt-1.5 max-w-sm mx-auto leading-relaxed">
-              Restricted portal for authorized editors and newsroom administrators.
+            <p className="text-xs text-slate-400 mt-2 max-w-sm mx-auto leading-relaxed">
+              Authorized newsroom access via <code className="text-slate-300 font-mono text-[11px] bg-slate-950 px-1.5 py-0.5 rounded border border-slate-800">/admin</code>
             </p>
           </div>
 

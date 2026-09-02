@@ -13,11 +13,11 @@ import {
   ChevronRight,
   Sparkles,
   LogOut,
-  Lock,
   UserCheck
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { CategoryType } from '../types';
+import { BrandLogo } from './BrandLogo';
 
 const CATEGORIES: { label: string; value: CategoryType }[] = [
   { label: 'Home', value: 'All' },
@@ -158,27 +158,20 @@ export const Header: React.FC = () => {
               >
                 Business Leaders
               </button>
-              <span className="hidden sm:inline text-slate-700">•</span>
               
-              {/* Staff Portal / Admin Button */}
-              {isAdminLoggedIn ? (
-                <button 
-                  onClick={() => setCurrentView('admin')}
-                  className="flex items-center gap-1 text-amber-400 hover:text-amber-300 transition-colors font-semibold"
-                  title="Open Admin CMS"
-                >
-                  <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Admin Desk</span>
-                </button>
-              ) : (
-                <button 
-                  onClick={() => setCurrentView('admin')}
-                  className="flex items-center gap-1 text-slate-400 hover:text-blue-400 transition-colors font-medium"
-                  title="Editorial Staff Sign In"
-                >
-                  <Lock className="w-3.5 h-3.5 text-slate-500" />
-                  <span>Staff Portal</span>
-                </button>
+              {/* Staff Portal / Admin Button - Visible ONLY when Admin is authenticated */}
+              {isAdminLoggedIn && (
+                <>
+                  <span className="hidden sm:inline text-slate-700">•</span>
+                  <button 
+                    onClick={() => setCurrentView('admin')}
+                    className="flex items-center gap-1 text-amber-400 hover:text-amber-300 transition-colors font-semibold"
+                    title="Open Admin CMS"
+                  >
+                    <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Admin Desk</span>
+                  </button>
+                </>
               )}
             </div>
           </div>
@@ -198,33 +191,17 @@ export const Header: React.FC = () => {
           </button>
         </div>
 
-        {/* Center: Brand Identity */}
+        {/* Center: Brand Identity (Official Logo) */}
         <div 
           onClick={() => {
             setSelectedCategory('All');
             setCurrentView('home');
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
-          className="cursor-pointer flex flex-col items-center text-center mx-auto lg:mx-0 group"
+          className="cursor-pointer flex items-center text-center mx-auto lg:mx-0 group"
+          title="Negarit Business Review - Home"
         >
-          <div className="flex items-center gap-2.5">
-            {/* Elegant Emblem Icon */}
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-blue-600 via-blue-700 to-slate-900 border border-blue-400/30 flex items-center justify-center shadow-lg shadow-blue-900/20 group-hover:border-amber-400/50 transition-all duration-300">
-              <span className="font-brand font-black text-lg sm:text-xl text-amber-400 tracking-tighter">
-                N
-              </span>
-            </div>
-
-            <div className="flex flex-col text-left">
-              <h1 className="font-brand text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-wider text-slate-100 uppercase group-hover:text-amber-200/95 transition-colors duration-200">
-                NEGARIT
-                <span className="text-blue-500 font-light text-xl sm:text-2xl ml-1.5">REVIEW</span>
-              </h1>
-            </div>
-          </div>
-          <span className="font-editorial italic text-xs sm:text-sm text-slate-400 tracking-wide mt-1 group-hover:text-slate-300 transition-colors">
-            Navigating Business Dynamics
-          </span>
+          <BrandLogo variant="horizontal" isDark={isDarkMode} size="lg" />
         </div>
 
         {/* Right: Actions */}
@@ -352,7 +329,7 @@ export const Header: React.FC = () => {
                 <span>Featured Business Leaders</span>
                 <Sparkles className="w-4 h-4 text-amber-400" />
               </button>
-              {isAdminLoggedIn ? (
+              {isAdminLoggedIn && (
                 <>
                   <button
                     onClick={() => {
@@ -379,20 +356,6 @@ export const Header: React.FC = () => {
                     <LogOut className="w-4 h-4 text-rose-400" />
                   </button>
                 </>
-              ) : (
-                <button
-                  onClick={() => {
-                    setCurrentView('admin');
-                    setIsMobileMenuOpen(false);
-                  }}
-                  className="w-full text-left px-3 py-2 rounded-md text-sm font-medium text-slate-300 hover:bg-slate-800 flex items-center justify-between"
-                >
-                  <div className="flex items-center gap-2">
-                    <Lock className="w-4 h-4 text-slate-400" />
-                    <span>Staff & Newsroom Portal</span>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-slate-500" />
-                </button>
               )}
               <button
                 onClick={() => {

@@ -1,0 +1,67 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stopColor="#F59E0B" />
+      <stop offset="100%" stopColor="#D97706" />
+    </linearGradient>
+    <linearGradient id="navyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stopColor="#1E3A8A" />
+      <stop offset="100%" stopColor="#0A2540" />
+    </linearGradient>
+  </defs>
+
+  <!-- Top Arc -->
+  <path
+    d="M 52 70 C 65 35 110 20 148 38 C 165 46 178 60 184 78"
+    stroke="#0A2540"
+    stroke-width="3.5"
+    stroke-linecap="round"
+    fill="none"
+  />
+
+  <!-- Bottom Left Arc -->
+  <path
+    d="M 55 90 C 42 110 46 142 66 160 C 80 172 98 178 118 178"
+    stroke="#0A2540"
+    stroke-width="3.5"
+    stroke-linecap="round"
+    fill="none"
+  />
+
+  <!-- N -->
+  <path
+    d="M 46 122 L 57 52 L 72 52 L 95 106 L 95 52 L 108 52 L 97 122 L 82 122 L 59 68 L 59 122 Z"
+    fill="#0A2540"
+  />
+
+  <!-- B -->
+  <path
+    d="M 104 52 L 132 52 C 146 52 153 58 153 68 C 153 75 148 81 140 84 C 150 87 155 94 155 104 C 155 116 145 122 130 122 L 104 122 Z M 118 64 L 118 78 L 129 78 C 135 78 139 75 139 71 C 139 67 135 64 129 64 Z M 118 92 L 118 110 L 131 110 C 138 110 142 107 142 101 C 142 95 138 92 131 92 Z"
+    fill="url(#goldGrad)"
+  />
+
+  <!-- R -->
+  <path
+    d="M 148 52 L 176 52 C 188 52 195 58 195 69 C 195 78 189 85 180 87 L 196 122 L 181 122 L 168 89 L 162 89 L 162 122 L 148 122 Z M 162 64 L 162 77 L 173 77 C 178 77 182 74 182 70 C 182 66 178 64 173 64 Z"
+    fill="#0A2540"
+  />
+
+  <!-- Financial Bars -->
+  <rect x="74" y="145" width="10" height="15" rx="2" fill="#0A2540" />
+  <rect x="88" y="136" width="10" height="24" rx="2" fill="#0A2540" />
+  <rect x="102" y="125" width="10" height="35" rx="2" fill="#0A2540" />
+  <rect x="116" y="112" width="10" height="48" rx="2" fill="#0A2540" />
+
+  <!-- Upward Trend Arrow -->
+  <path
+    d="M 64 154 C 84 174 126 170 162 132"
+    stroke="url(#goldGrad)"
+    stroke-width="6.5"
+    stroke-linecap="round"
+    fill="none"
+  />
+  <polygon
+    points="176,120 152,126 166,140"
+    fill="url(#goldGrad)"
+  />
+</svg>

@@ -11,12 +11,12 @@ import {
   Radio, 
   Compass, 
   Sparkles,
-  Lock,
   LogOut,
   ShieldCheck
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { CategoryType } from '../types';
+import { BrandLogo } from './BrandLogo';
 
 export const Footer: React.FC = () => {
   const { 
@@ -58,19 +58,10 @@ export const Footer: React.FC = () => {
                 setCurrentView('home');
                 scrollToTop();
               }}
-              className="cursor-pointer inline-flex items-center gap-3"
+              className="cursor-pointer inline-flex items-center"
+              title="Negarit Business Review - Home"
             >
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center text-amber-400 font-brand font-black text-xl shadow-lg border border-amber-400/30">
-                N
-              </div>
-              <div>
-                <span className="font-brand font-extrabold text-base sm:text-lg tracking-wider text-slate-100 uppercase block">
-                  NEGARIT
-                </span>
-                <span className="text-[9px] font-brand tracking-[0.25em] text-amber-400 uppercase font-bold block -mt-1">
-                  BUSINESS REVIEW
-                </span>
-              </div>
+              <BrandLogo variant="horizontal" isDark={true} size="md" />
             </div>
 
             <p className="text-slate-400 text-xs leading-relaxed max-w-sm">
@@ -177,7 +168,7 @@ export const Footer: React.FC = () => {
                   Daily Executive Morning Briefing
                 </button>
               </li>
-              {isAdminLoggedIn ? (
+              {isAdminLoggedIn && (
                 <li className="pt-2 border-t border-slate-850">
                   <div className="flex items-center justify-between text-[11px]">
                     <button
@@ -200,19 +191,6 @@ export const Footer: React.FC = () => {
                       <span>Log Out</span>
                     </button>
                   </div>
-                </li>
-              ) : (
-                <li>
-                  <button
-                    onClick={() => {
-                      setCurrentView('admin');
-                      scrollToTop();
-                    }}
-                    className="hover:text-amber-400 text-slate-500 transition-colors flex items-center gap-1.5 text-[11px]"
-                  >
-                    <Lock className="w-3 h-3" />
-                    <span>Staff & Editorial Newsroom Login</span>
-                  </button>
                 </li>
               )}
             </ul>
