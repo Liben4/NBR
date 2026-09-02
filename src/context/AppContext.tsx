@@ -272,13 +272,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       return { success: true };
     }
 
-    if (cleanEmail !== 'liben457@gmail.com') {
-      return { success: false, message: 'Unauthorized administrator email address. Access is restricted to liben457@gmail.com.' };
-    }
-
     return { 
       success: false, 
-      message: 'Invalid password for liben457@gmail.com. Please check your credentials.' 
+      message: 'Authentication failed. Please verify your administrator email and access passphrase.' 
     };
   };
 

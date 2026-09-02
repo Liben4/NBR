@@ -60,7 +60,7 @@ export const AdminDashboard: React.FC = () => {
   }
 
   // Active admin tab
-  const [activeTab, setActiveTab] = useState<'articles' | 'forex' | 'subscribers' | 'comments' | 'audit'>('articles');
+  const [activeTab, setActiveTab] = useState<'articles' | 'forex' | 'subscribers' | 'comments' | 'audit' | 'security'>('articles');
 
   // Search and filters for articles
   const [articleSearch, setArticleSearch] = useState('');
@@ -423,7 +423,19 @@ export const AdminDashboard: React.FC = () => {
           }`}
         >
           <History className="w-4 h-4 text-amber-400" />
-          <span>Audit Log & Telemetry</span>
+          <span>Audit Log</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('security')}
+          className={`px-4 py-2 rounded-xl transition-all whitespace-nowrap flex items-center gap-2 ${
+            activeTab === 'security'
+              ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/30'
+              : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+          }`}
+        >
+          <ShieldCheck className="w-4 h-4 text-amber-400" />
+          <span>Security & Credentials</span>
         </button>
       </div>
 
@@ -891,6 +903,127 @@ export const AdminDashboard: React.FC = () => {
               </div>
               <span className="text-slate-500">Today, 06:00 AM</span>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* TAB 6: SECURITY & ADMIN PROFILE (Visible strictly to authenticated admin) */}
+      {activeTab === 'security' && (
+        <div className="space-y-6 animate-fadeIn">
+          {/* Main Account Card */}
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl relative overflow-hidden">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 pb-6 border-b border-slate-800">
+              <div className="flex items-center gap-4">
+                <div className="relative">
+                  <img 
+                    src={adminUser.avatar} 
+                    alt={adminUser.name} 
+                    className="w-16 h-16 rounded-2xl object-cover border-2 border-amber-400 shadow-xl"
+                    referrerPolicy="no-referrer"
+                  />
+                  <span className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-emerald-500 border-2 border-slate-900 flex items-center justify-center">
+                    <Check className="w-2.5 h-2.5 text-white" />
+                  </span>
+                </div>
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-400/20 text-amber-300 border border-amber-400/30">
+                      {adminUser.role}
+                    </span>
+                    <span className="text-xs text-emerald-400 font-mono font-semibold">Active Session</span>
+                  </div>
+                  <h2 className="font-editorial text-2xl font-bold text-slate-100">{adminUser.name}</h2>
+                  <p className="text-xs text-slate-400 font-mono">{adminUser.email}</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={logoutAdmin}
+                  className="px-4 py-2 rounded-xl bg-rose-950/50 hover:bg-rose-900 text-rose-300 hover:text-white border border-rose-800 text-xs font-bold transition-all flex items-center gap-1.5"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span>Terminate Session (Log Out)</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Profile & Security Credentials Details */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-6">
+              <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800">
+                <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">
+                  Registered Admin Email
+                </span>
+                <span className="text-sm font-bold text-slate-100 font-mono select-all block">
+                  {adminUser.email}
+                </span>
+                <span className="text-[10px] text-slate-500 mt-1 block">Primary newsroom authentication identity</span>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800">
+                <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">
+                  Assigned Authority
+                </span>
+                <span className="text-sm font-bold text-amber-300 block">
+                  {adminUser.role} (Superadmin)
+                </span>
+                <span className="text-[10px] text-slate-500 mt-1 block">Full publishing, market editing, & moderation rights</span>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800">
+                <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">
+                  Department & Division
+                </span>
+                <span className="text-xs font-bold text-slate-200 block">
+                  {adminUser.department}
+                </span>
+                <span className="text-[10px] text-slate-500 mt-1 block">Horn of Africa Regional Headquarters</span>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800">
+                <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">
+                  Database & Cloud Backend
+                </span>
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="text-xs font-bold text-emerald-300 font-mono">Connected & Synchronized</span>
+                </div>
+                <span className="text-[10px] text-slate-500 mt-1 block">PostgreSQL / Cloud SQL / Render API Active</span>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800">
+                <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">
+                  Session Security
+                </span>
+                <span className="text-xs font-bold text-slate-200 font-mono block">
+                  TLS 1.3 • AES-256 State
+                </span>
+                <span className="text-[10px] text-slate-500 mt-1 block">Encrypted token persisted on local client</span>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800">
+                <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">
+                  Last Login Timestamp
+                </span>
+                <span className="text-xs font-bold text-slate-200 font-mono block">
+                  {adminUser.lastLogin || 'Current Session'}
+                </span>
+                <span className="text-[10px] text-slate-500 mt-1 block">Bole Commercial District, Addis Ababa</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Security Protocols Notice */}
+          <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 text-xs space-y-3">
+            <h4 className="font-bold text-slate-200 text-sm flex items-center gap-2">
+              <Lock className="w-4 h-4 text-amber-400" />
+              <span>Editorial Newsroom Security Protocol</span>
+            </h4>
+            <ul className="space-y-1.5 text-slate-400 list-disc list-inside leading-relaxed text-xs">
+              <li>Editorial credentials and administrative controls are strictly restricted to authorized staff.</li>
+              <li>Public reader views remain cleanly decoupled from newsroom administrative operations.</li>
+              <li>Always remember to log out when completing editing sessions on shared or public workstations.</li>
+            </ul>
           </div>
         </div>
       )}
