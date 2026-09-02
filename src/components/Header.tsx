@@ -20,17 +20,6 @@ import { CategoryType } from '../types';
 import { BrandLogo } from './BrandLogo';
 import { SocialLinks } from './SocialLinks';
 
-const CATEGORIES: { label: string; value: CategoryType }[] = [
-  { label: 'Home', value: 'All' },
-  { label: 'Business', value: 'Business' },
-  { label: 'Economy', value: 'Economy' },
-  { label: 'Finance', value: 'Finance' },
-  { label: 'Technology', value: 'Technology' },
-  { label: 'Entrepreneurship', value: 'Entrepreneurship' },
-  { label: 'Markets', value: 'Markets' },
-  { label: 'Opinion', value: 'Opinion' },
-];
-
 export const Header: React.FC = () => {
   const { 
     isDarkMode, 
@@ -42,6 +31,7 @@ export const Header: React.FC = () => {
     setCurrentView, 
     selectedCategory, 
     setSelectedCategory,
+    categories,
     setIsSearchOpen,
     bookmarkedIds,
     setIsBookmarksOpen,
@@ -59,16 +49,21 @@ export const Header: React.FC = () => {
     year: 'numeric'
   });
 
-  const handleCategoryClick = (cat: CategoryType) => {
-    if (cat === 'Markets') {
+  const handleCategoryClick = (catName: string) => {
+    if (catName === 'Markets') {
       setCurrentView('markets');
     } else {
-      setSelectedCategory(cat);
-      setCurrentView(cat === 'All' ? 'home' : 'category');
+      setSelectedCategory(catName as CategoryType);
+      setCurrentView(catName === 'All' ? 'home' : 'category');
     }
     setIsMobileMenuOpen(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  const navCategories = [
+    { label: 'Home', value: 'All' },
+    ...categories.map(c => ({ label: c.name, value: c.name }))
+  ];
 
   const usdRate = currencies.find(c => c.code === 'USD');
 
@@ -261,7 +256,7 @@ export const Header: React.FC = () => {
       <nav className="sticky top-0 z-40 w-full bg-white/95 dark:bg-slate-950/95 glass-nav border-t border-b border-slate-200 dark:border-slate-800/80 shadow-xs transition-colors duration-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-8 flex items-center justify-between overflow-x-auto no-scrollbar">
           <ul className="flex items-center gap-1 sm:gap-2 py-1.5 text-xs sm:text-sm font-medium tracking-wide">
-            {CATEGORIES.map((cat) => {
+            {navCategories.map((cat) => {
               const isActive = 
                 (cat.value === 'All' && currentView === 'home') ||
                 (cat.value === 'Markets' && currentView === 'markets') ||
@@ -313,7 +308,7 @@ export const Header: React.FC = () => {
         {/* Mobile Dropdown Menu */}
         {isMobileMenuOpen && (
           <div className="lg:hidden w-full bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 py-4 px-4 flex flex-col gap-2 shadow-xl animate-fadeIn">
-            {CATEGORIES.map((cat) => (
+            {navCategories.map((cat) => (
               <button
                 key={`mob-${cat.value}`}
                 onClick={() => handleCategoryClick(cat.value)}

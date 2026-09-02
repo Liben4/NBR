@@ -6,12 +6,13 @@ import { Article } from '../types';
 export const HeroSection: React.FC = () => {
   const { articles, openArticle, isBookmarked, toggleBookmark, setCurrentView } = useApp();
 
-  // Find hero featured article or fallback to first
-  const heroArticle = articles.find(a => a.isHeroFeatured && a.status === 'published') || articles[0];
+  // Find hero featured article or fallback to first published
+  const publishedArticles = articles.filter(a => a.status === 'published');
+  const heroArticle = publishedArticles.find(a => a.isHeroFeatured) || publishedArticles[0] || articles[0];
   
   // Side stories: 3-4 other high importance articles
-  const sideArticles = articles
-    .filter(a => a.id !== heroArticle.id && a.status === 'published')
+  const sideArticles = publishedArticles
+    .filter(a => a.id !== heroArticle?.id)
     .slice(0, 3);
 
   if (!heroArticle) return null;

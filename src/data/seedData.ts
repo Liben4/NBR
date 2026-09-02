@@ -1,4 +1,129 @@
-import { Article, Author, BusinessLeader, CurrencyRate, MarketIndicator, NewsletterSubscriber, Comment } from '../types';
+import { 
+  Article, 
+  Author, 
+  BusinessLeader, 
+  CurrencyRate, 
+  MarketIndicator, 
+  NewsletterSubscriber, 
+  Comment, 
+  CategoryItem, 
+  MediaItem, 
+  FeaturedConfig 
+} from '../types';
+
+export const INITIAL_CATEGORIES: CategoryItem[] = [
+  { id: 'cat-1', slug: 'business', name: 'Business', description: 'Corporate governance, mergers, trade partnerships, and enterprise growth in the Horn of Africa.', color: 'blue', order: 1 },
+  { id: 'cat-2', slug: 'economy', name: 'Economy', description: 'Macroeconomic indicators, central bank policies, fiscal reforms, and inflationary trends.', color: 'amber', order: 2 },
+  { id: 'cat-3', slug: 'finance', name: 'Finance', description: 'Commercial banking, fintech balance sheets, monetary regulations, and credit growth.', color: 'emerald', order: 3 },
+  { id: 'cat-4', slug: 'technology', name: 'Technology', description: 'Digital public infrastructure, telecommunications, artificial intelligence, and software ecosystems.', color: 'indigo', order: 4 },
+  { id: 'cat-5', slug: 'startups', name: 'Startups', description: 'Venture funding, founder stories, seed rounds, and early-stage innovation hubs.', color: 'purple', order: 5 },
+  { id: 'cat-6', slug: 'investment', name: 'Investment', description: 'Foreign direct investment, industrial park capital allocations, and sovereign bond issues.', color: 'cyan', order: 6 },
+  { id: 'cat-7', slug: 'markets', name: 'Markets', description: 'Ethiopian Securities Exchange (ESX), commodity trading, foreign exchange flows, and treasury yields.', color: 'rose', order: 7 },
+  { id: 'cat-8', slug: 'leadership', name: 'Leadership', description: 'Executive profiles, C-suite interviews, board strategies, and industrial pioneers.', color: 'amber', order: 8 },
+  { id: 'cat-9', slug: 'opinion', name: 'Opinion', description: 'Thought leadership, academic columns, and economic policy debates.', color: 'slate', order: 9 },
+  { id: 'cat-10', slug: 'international-business', name: 'International Business', description: 'Cross-border commerce, AfCFTA integration, BRICS partnerships, and global market linkages.', color: 'teal', order: 10 },
+];
+
+export const INITIAL_MEDIA_ITEMS: MediaItem[] = [
+  {
+    id: 'media-1',
+    title: 'Commercial Bank of Ethiopia (CBE) Headquarters Tower',
+    url: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&auto=format&fit=crop&q=80',
+    caption: 'Modern commercial banking skyscraper in Addis Ababa financial district.',
+    credit: 'Negarit Business Archive / Unsplash',
+    category: 'Finance',
+    uploadedAt: '2026-08-15',
+    fileSize: '1.2 MB',
+    dimensions: '1920x1080',
+    usageCount: 4
+  },
+  {
+    id: 'media-2',
+    title: 'Ethiopian Securities Exchange (ESX) Trading Floor',
+    url: 'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=1200&auto=format&fit=crop&q=80',
+    caption: 'Digital terminals and financial analytics at the capital markets exchange.',
+    credit: 'ESX Press Office / Unsplash',
+    category: 'Markets',
+    uploadedAt: '2026-08-18',
+    fileSize: '950 KB',
+    dimensions: '1920x1200',
+    usageCount: 3
+  },
+  {
+    id: 'media-3',
+    title: 'Digital Mobile Payment & Telebirr Ecosystem',
+    url: 'https://images.unsplash.com/photo-1556742049-0a67c5574f73?w=1200&auto=format&fit=crop&q=80',
+    caption: 'Contactless POS payment and mobile money interoperability in retail stores.',
+    credit: 'Fintech Bureau Addis',
+    category: 'Technology',
+    uploadedAt: '2026-08-20',
+    fileSize: '1.4 MB',
+    dimensions: '2000x1333',
+    usageCount: 5
+  },
+  {
+    id: 'media-4',
+    title: 'Specialty Coffee Export Logistics & Jimma Farm',
+    url: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=1200&auto=format&fit=crop&q=80',
+    caption: 'Highland Arabica coffee harvest in Oromia region for European and Asian export.',
+    credit: 'Agro Export Federation',
+    category: 'Economy',
+    uploadedAt: '2026-08-22',
+    fileSize: '820 KB',
+    dimensions: '1800x1200',
+    usageCount: 2
+  },
+  {
+    id: 'media-5',
+    title: 'Ethiopian Airlines Boeing 787-9 Dreamliner at Bole Airport',
+    url: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=1200&auto=format&fit=crop&q=80',
+    caption: 'Cargo and passenger flagship aircraft serving global trade corridors.',
+    credit: 'Ethiopian Airlines Group',
+    category: 'Business',
+    uploadedAt: '2026-08-25',
+    fileSize: '1.8 MB',
+    dimensions: '2400x1600',
+    usageCount: 3
+  },
+  {
+    id: 'media-6',
+    title: 'Hawassa Industrial Park Garment & Textile Facility',
+    url: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=1200&auto=format&fit=crop&q=80',
+    caption: 'Automated manufacturing lines producing high-grade apparel exports.',
+    credit: 'EIC Investment Board',
+    category: 'Investment',
+    uploadedAt: '2026-08-27',
+    fileSize: '1.1 MB',
+    dimensions: '1920x1080',
+    usageCount: 2
+  },
+  {
+    id: 'media-7',
+    title: 'Addis Ababa Tech Park & AI Startup Hub',
+    url: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?w=1200&auto=format&fit=crop&q=80',
+    caption: 'Software developers collaborating on enterprise cloud applications.',
+    credit: 'Innovation Ministry Archive',
+    category: 'Startups',
+    uploadedAt: '2026-08-29',
+    fileSize: '1.5 MB',
+    dimensions: '2048x1365',
+    usageCount: 2
+  }
+];
+
+export const INITIAL_FEATURED_CONFIG: FeaturedConfig = {
+  breakingNewsTicker: [
+    'NBE FX Liberalization: Interbank foreign currency market liquidity surges 38% as commercial banks adjust spread margins',
+    'Ethiopian Securities Exchange (ESX) secures initial public listings pipeline ahead of landmark debut trading quarter',
+    'Ethio Telecom and Safaricom Ethiopia expand interoperable mobile money integrations via Telebirr and M-Pesa gateways',
+    'National Bank of Ethiopia raises foreign exchange retention threshold for coffee exporters to 60%',
+    'Commercial Bank of Ethiopia reports total asset base surpassing 2.4 Trillion ETB following digitalization'
+  ],
+  heroArticleId: 'art-1',
+  topStoryArticleId: 'art-2',
+  trendingArticleIds: ['art-1', 'art-3', 'art-5', 'art-2'],
+  editorPickArticleIds: ['art-2', 'art-4', 'art-6']
+};
 
 export const INITIAL_AUTHORS: Author[] = [
   {

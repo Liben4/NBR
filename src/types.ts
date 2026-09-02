@@ -1,12 +1,13 @@
-export type CategoryType = 
-  | 'All'
-  | 'Business'
-  | 'Economy'
-  | 'Finance'
-  | 'Technology'
-  | 'Entrepreneurship'
-  | 'Markets'
-  | 'Opinion';
+export type CategoryType = string;
+
+export interface CategoryItem {
+  id: string;
+  slug: string;
+  name: string;
+  description?: string;
+  color: string;
+  order: number;
+}
 
 export interface Author {
   id: string;
@@ -30,6 +31,8 @@ export interface Comment {
   isLiked?: boolean;
 }
 
+export type ArticleStatus = 'published' | 'draft' | 'scheduled' | 'archived';
+
 export interface Article {
   id: string;
   slug: string;
@@ -40,11 +43,16 @@ export interface Article {
   category: CategoryType;
   author: Author;
   publishedAt: string;
+  scheduledAt?: string;
   readTime: string;
   featuredImage: string;
   imageCaption?: string;
+  featuredImageCredit?: string;
+  sourceReference?: string;
   isBreaking?: boolean;
   isHeroFeatured?: boolean;
+  isTopStory?: boolean;
+  isTrending?: boolean;
   isEditorPick?: boolean;
   isMostRead?: boolean;
   views: number;
@@ -59,7 +67,28 @@ export interface Article {
   audioDuration?: string;
   audioUrl?: string;
   relatedCompany?: string;
-  status: 'published' | 'draft';
+  status: ArticleStatus;
+}
+
+export interface MediaItem {
+  id: string;
+  title: string;
+  url: string;
+  caption?: string;
+  credit?: string;
+  category?: string;
+  uploadedAt: string;
+  fileSize?: string;
+  dimensions?: string;
+  usageCount?: number;
+}
+
+export interface FeaturedConfig {
+  breakingNewsTicker: string[];
+  heroArticleId: string;
+  topStoryArticleId: string;
+  trendingArticleIds: string[];
+  editorPickArticleIds: string[];
 }
 
 export interface MarketDataPoint {
@@ -138,3 +167,4 @@ export type ViewMode =
   | 'leaders'
   | 'admin'
   | 'bookmarks';
+

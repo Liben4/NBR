@@ -6,10 +6,10 @@ import { Article } from '../types';
 export const EditorPickSection: React.FC = () => {
   const { articles, openArticle, isBookmarked, toggleBookmark } = useApp();
 
-  // Find articles marked as editor pick
-  const editorPicks = articles
-    .filter(a => a.isEditorPick && a.status === 'published')
-    .slice(0, 3);
+  // Find articles marked as editor pick or fallback to published
+  const published = articles.filter(a => a.status === 'published');
+  const explicitlyPicked = published.filter(a => a.isEditorPick);
+  const editorPicks = (explicitlyPicked.length > 0 ? explicitlyPicked : published).slice(0, 3);
 
   if (editorPicks.length === 0) return null;
 
