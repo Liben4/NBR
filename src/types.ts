@@ -19,16 +19,33 @@ export interface Author {
   linkedin?: string;
 }
 
+export type CommentStatus = 'approved' | 'pending' | 'rejected' | 'spam';
+
 export interface Comment {
   id: string;
   articleId: string;
   authorName: string;
+  authorEmail?: string;
   authorRole?: string;
   avatar?: string;
   content: string;
   createdAt: string;
   likes: number;
   isLiked?: boolean;
+  status: CommentStatus;
+  ipAddress?: string;
+  isBlockedUser?: boolean;
+  flagReason?: string;
+}
+
+export interface BlockedUser {
+  id: string;
+  authorName: string;
+  email?: string;
+  ipAddress?: string;
+  blockedAt: string;
+  reason: string;
+  blockedBy: string;
 }
 
 export type ArticleStatus = 'published' | 'draft' | 'scheduled' | 'archived';
@@ -159,6 +176,51 @@ export interface AdminUser {
   lastLogin?: string;
 }
 
+export interface AdminSession {
+  id: string;
+  deviceName: string;
+  deviceType: 'desktop' | 'mobile' | 'tablet';
+  browser: string;
+  os: string;
+  ipAddress: string;
+  location: string;
+  lastActive: string;
+  isCurrent: boolean;
+}
+
+export interface LoginActivity {
+  id: string;
+  timestamp: string;
+  ipAddress: string;
+  location: string;
+  device: string;
+  browser: string;
+  status: 'success' | 'failed' | 'warning';
+  action: string;
+}
+
+export interface SecuritySettings {
+  twoFactorEnabled: boolean;
+  twoFactorSecret?: string;
+  backupCodes: string[];
+  lastPasswordChange: string;
+  sessionTimeoutMinutes: number;
+}
+
+export interface TrafficSourceItem {
+  id: string;
+  name: string;
+  iconType: 'google' | 'facebook' | 'instagram' | 'linkedin' | 'direct' | 'newsletter';
+  iconEmoji: string;
+  sessions: number;
+  percentage: number;
+  bounceRate: string;
+  avgDuration: string;
+  change: number;
+  isPositive: boolean;
+  color: string;
+}
+
 export type ViewMode = 
   | 'home'
   | 'article'
@@ -167,4 +229,5 @@ export type ViewMode =
   | 'leaders'
   | 'admin'
   | 'bookmarks';
+
 

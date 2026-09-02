@@ -48,6 +48,7 @@ export const ArticleView: React.FC = () => {
 
   // New comment input
   const [commentName, setCommentName] = useState('');
+  const [commentEmail, setCommentEmail] = useState('');
   const [commentRole, setCommentRole] = useState('');
   const [commentText, setCommentText] = useState('');
 
@@ -102,8 +103,10 @@ export const ArticleView: React.FC = () => {
     .filter(a => a.id !== selectedArticle.id && a.category === selectedArticle.category && a.status === 'published')
     .slice(0, 3);
 
-  // Article comments
-  const articleComments = comments.filter(c => c.articleId === selectedArticle.id);
+  // Article comments (display only approved comments to general audience)
+  const articleComments = comments.filter(
+    c => c.articleId === selectedArticle.id && (c.status === 'approved' || !c.status)
+  );
 
   const handleShare = (platform: 'copy' | 'twitter' | 'linkedin' | 'facebook' | 'telegram' | 'whatsapp') => {
     const url = window.location.href;
@@ -127,9 +130,10 @@ export const ArticleView: React.FC = () => {
   const handleCommentSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!commentText.trim()) return;
-    addComment(selectedArticle.id, commentName, commentText, commentRole);
+    addComment(selectedArticle.id, commentName, commentText, commentRole, commentEmail);
     setCommentText('');
     setCommentName('');
+    setCommentEmail('');
     setCommentRole('');
   };
 
@@ -499,7 +503,7 @@ export const ArticleView: React.FC = () => {
             <h4 className="font-brand text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
               Contribute to the Perspective
             </h4>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <input 
                 type="text"
                 required
@@ -509,8 +513,15 @@ export const ArticleView: React.FC = () => {
                 className="px-3.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 text-xs focus:outline-none focus:border-blue-500"
               />
               <input 
+                type="email"
+                placeholder="Email Address (private)"
+                value={commentEmail}
+                onChange={(e) => setCommentEmail(e.target.value)}
+                className="px-3.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 text-xs focus:outline-none focus:border-blue-500"
+              />
+              <input 
                 type="text"
-                placeholder="Professional Title / Organization"
+                placeholder="Title / Organization"
                 value={commentRole}
                 onChange={(e) => setCommentRole(e.target.value)}
                 className="px-3.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 text-xs focus:outline-none focus:border-blue-500"

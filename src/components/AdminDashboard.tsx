@@ -48,8 +48,11 @@ import { Article, CategoryItem, MediaItem, ArticleStatus, CategoryType } from '.
 import { AdminLogin } from './AdminLogin';
 import { ArticlePreviewModal } from './ArticlePreviewModal';
 import { MediaPickerModal } from './MediaPickerModal';
+import { CommentModerationTab } from './admin/CommentModerationTab';
+import { ContentPerformanceTab } from './admin/ContentPerformanceTab';
+import { AdminSecurityTab } from './admin/AdminSecurityTab';
 
-type AdminTab = 'articles' | 'categories' | 'media' | 'featured' | 'forex' | 'subscribers' | 'comments';
+type AdminTab = 'articles' | 'categories' | 'media' | 'featured' | 'performance' | 'forex' | 'subscribers' | 'comments' | 'security';
 
 export const AdminDashboard: React.FC = () => {
   const { 
@@ -459,7 +462,19 @@ export const AdminDashboard: React.FC = () => {
             }`}
           >
             <Star className="w-4 h-4 text-amber-400" />
-            <span>Featured & Homepage</span>
+            <span>Featured & Slots</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('performance')}
+            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 transition-all ${
+              activeTab === 'performance'
+                ? 'bg-blue-600 text-white shadow-md'
+                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+            }`}
+          >
+            <TrendingUp className="w-4 h-4 text-emerald-400" />
+            <span>Performance & Traffic</span>
           </button>
 
           <button
@@ -495,7 +510,19 @@ export const AdminDashboard: React.FC = () => {
             }`}
           >
             <MessageSquare className="w-4 h-4" />
-            <span>Comments ({comments.length})</span>
+            <span>Comments & Moderation ({comments.length})</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('security')}
+            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 transition-all ${
+              activeTab === 'security'
+                ? 'bg-blue-600 text-white shadow-md'
+                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+            }`}
+          >
+            <ShieldCheck className="w-4 h-4 text-indigo-400" />
+            <span>Admin & Security</span>
           </button>
 
         </div>
@@ -1444,68 +1471,29 @@ export const AdminDashboard: React.FC = () => {
         )}
 
         {/* ========================================================= */}
-        {/* ================= 7. TAB: COMMENTS ======================= */}
+        {/* ================= 4b. TAB: PERFORMANCE & TRAFFIC ========= */}
+        {/* ========================================================= */}
+        {activeTab === 'performance' && (
+          <div className="animate-fadeIn">
+            <ContentPerformanceTab />
+          </div>
+        )}
+
+        {/* ========================================================= */}
+        {/* ================= 7. TAB: COMMENTS & MODERATION ========== */}
         {/* ========================================================= */}
         {activeTab === 'comments' && (
-          <div className="space-y-6 animate-fadeIn">
-            <div className="p-5 rounded-2xl bg-slate-950 border border-slate-800 shadow-md">
-              <h2 className="font-editorial text-2xl font-bold text-white flex items-center gap-2">
-                <MessageSquare className="w-5 h-5 text-blue-400" />
-                <span>Executive Commentary Moderation</span>
-              </h2>
-              <p className="text-xs text-slate-400 mt-0.5">
-                Review and moderate reader feedback on published investigative briefings
-              </p>
-            </div>
+          <div className="animate-fadeIn">
+            <CommentModerationTab />
+          </div>
+        )}
 
-            <div className="space-y-3">
-              {comments.length === 0 ? (
-                <div className="p-12 text-center text-slate-500 border border-dashed border-slate-800 rounded-2xl bg-slate-950">
-                  No reader comments posted yet.
-                </div>
-              ) : (
-                comments.map(c => {
-                  const relatedArt = articles.find(a => a.id === c.articleId);
-                  return (
-                    <div
-                      key={c.id}
-                      className="p-4 rounded-2xl bg-slate-950 border border-slate-800 flex items-start justify-between gap-4"
-                    >
-                      <div className="flex items-start gap-3">
-                        <img
-                          src={c.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(c.authorName)}`}
-                          alt={c.authorName}
-                          className="w-9 h-9 rounded-full object-cover bg-slate-800"
-                        />
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <span className="font-bold text-sm text-white">{c.authorName}</span>
-                            <span className="text-xs text-slate-500">• {c.authorRole || 'Reader'}</span>
-                            <span className="text-[10px] text-slate-500">{c.createdAt}</span>
-                          </div>
-                          {relatedArt && (
-                            <p className="text-[11px] text-blue-400 mt-0.5">
-                              On: "{relatedArt.title}"
-                            </p>
-                          )}
-                          <p className="text-xs sm:text-sm text-slate-300 mt-2 leading-relaxed">
-                            "{c.content}"
-                          </p>
-                        </div>
-                      </div>
-
-                      <button
-                        onClick={() => deleteComment(c.id)}
-                        className="p-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 transition-colors shrink-0"
-                        title="Delete comment"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  );
-                })
-              )}
-            </div>
+        {/* ========================================================= */}
+        {/* ================= 8. TAB: ADMIN & SECURITY =============== */}
+        {/* ========================================================= */}
+        {activeTab === 'security' && (
+          <div className="animate-fadeIn">
+            <AdminSecurityTab />
           </div>
         )}
 

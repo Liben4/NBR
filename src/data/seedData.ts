@@ -8,7 +8,12 @@ import {
   Comment, 
   CategoryItem, 
   MediaItem, 
-  FeaturedConfig 
+  FeaturedConfig,
+  BlockedUser,
+  TrafficSourceItem,
+  AdminSession,
+  LoginActivity,
+  SecuritySettings
 } from '../types';
 
 export const INITIAL_CATEGORIES: CategoryItem[] = [
@@ -821,36 +826,294 @@ export const INITIAL_COMMENTS: Comment[] = [
     id: 'comm-1',
     articleId: 'art-1',
     authorName: 'Dr. Girma Wolde',
+    authorEmail: 'girma.wolde@addisecon.org',
     authorRole: 'Macroeconomic Strategist',
     avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80',
     content: 'The reduction in the parallel market spread is remarkable. The crucial next step is ensuring sustained export diversification beyond coffee and gold to maintain foreign exchange reserves organically.',
     createdAt: '2 hours ago',
     likes: 24,
-    isLiked: false
+    isLiked: false,
+    status: 'approved',
+    ipAddress: '197.156.104.22'
   },
   {
     id: 'comm-2',
     articleId: 'art-1',
     authorName: 'Rahel Asfaw',
+    authorEmail: 'rahel.asfaw@medequip.et',
     authorRole: 'Corporate Treasury Director',
     avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&auto=format&fit=crop&q=80',
     content: 'As an importer of medical equipment, the ability to obtain letters of credit with transparent pricing has transformed our inventory planning. Excellent analysis by Negarit.',
     createdAt: '4 hours ago',
     likes: 18,
-    isLiked: false
+    isLiked: false,
+    status: 'approved',
+    ipAddress: '197.156.88.14'
   },
   {
     id: 'comm-3',
     articleId: 'art-2',
     authorName: 'Yohannes Tefera',
+    authorEmail: 'yohannes@eastafricacapital.com',
     authorRole: 'Private Equity Associate',
     avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80',
     content: 'The establishment of automated central depository accounts will finally bring retail investor trust. Waiting eagerly for the first bank listings on ESX!',
     createdAt: '1 day ago',
     likes: 31,
-    isLiked: true
+    isLiked: true,
+    status: 'approved',
+    ipAddress: '196.188.241.95'
+  },
+  {
+    id: 'comm-4',
+    articleId: 'art-3',
+    authorName: 'Meron Mengistu',
+    authorEmail: 'meron.m@fintechhub.et',
+    authorRole: 'Fintech Product Lead',
+    avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&auto=format&fit=crop&q=80',
+    content: 'National Bank payment system interoperability has unlocked incredible merchant velocity. We are observing 40% month-on-month merchant onboarding surges.',
+    createdAt: '3 hours ago',
+    likes: 12,
+    isLiked: false,
+    status: 'pending',
+    ipAddress: '197.156.90.110'
+  },
+  {
+    id: 'comm-5',
+    articleId: 'art-4',
+    authorName: 'Fast Crypto Bot',
+    authorEmail: 'spam-bot-992@crypto-yield-fast.xyz',
+    authorRole: 'Unknown Guest',
+    avatar: 'https://api.dicebear.com/7.x/initials/svg?seed=CryptoBot',
+    content: 'Guaranteed 500% daily forex returns! Join our telegram channel t.me/fast_ethiopian_birr_forex_profit for immediate automated trading signals!!!',
+    createdAt: '30 mins ago',
+    likes: 0,
+    isLiked: false,
+    status: 'spam',
+    ipAddress: '45.142.214.88',
+    flagReason: 'Detected automated financial solicitation spam'
+  },
+  {
+    id: 'comm-6',
+    articleId: 'art-2',
+    authorName: 'Anonymous Troller',
+    authorEmail: 'anon_troll@throwaway.net',
+    authorRole: 'Commenter',
+    avatar: 'https://api.dicebear.com/7.x/initials/svg?seed=Anon',
+    content: 'All financial markets are a complete scam and this reporting is biased nonsense without any facts.',
+    createdAt: '5 hours ago',
+    likes: 1,
+    isLiked: false,
+    status: 'rejected',
+    ipAddress: '185.220.101.5'
   }
 ];
+
+export const INITIAL_BLOCKED_USERS: BlockedUser[] = [
+  {
+    id: 'block-1',
+    authorName: 'Fast Crypto Bot',
+    email: 'spam-bot-992@crypto-yield-fast.xyz',
+    ipAddress: '45.142.214.88',
+    blockedAt: '2026-09-01 14:22',
+    reason: 'Repeated unauthorized financial scam and bot spam',
+    blockedBy: 'Liben (Editor-in-Chief)'
+  },
+  {
+    id: 'block-2',
+    authorName: 'Scraper Abuser 01',
+    email: 'scraper@rogue-aggregator.co',
+    ipAddress: '103.152.18.99',
+    blockedAt: '2026-08-25 09:15',
+    reason: 'Automated comment flood and content plagiarism scraper',
+    blockedBy: 'Liben (Editor-in-Chief)'
+  }
+];
+
+export const INITIAL_TRAFFIC_SOURCES: TrafficSourceItem[] = [
+  {
+    id: 'src-1',
+    name: 'Google / Search',
+    iconType: 'google',
+    iconEmoji: '🔍',
+    sessions: 142850,
+    percentage: 38.4,
+    bounceRate: '28.2%',
+    avgDuration: '4m 48s',
+    change: 14.8,
+    isPositive: true,
+    color: '#4285F4'
+  },
+  {
+    id: 'src-2',
+    name: 'Direct Traffic',
+    iconType: 'direct',
+    iconEmoji: '🌐',
+    sessions: 92400,
+    percentage: 24.8,
+    bounceRate: '21.5%',
+    avgDuration: '5m 32s',
+    change: 8.3,
+    isPositive: true,
+    color: '#10B981'
+  },
+  {
+    id: 'src-3',
+    name: 'LinkedIn',
+    iconType: 'linkedin',
+    iconEmoji: '🔗',
+    sessions: 58200,
+    percentage: 15.6,
+    bounceRate: '24.1%',
+    avgDuration: '5m 12s',
+    change: 22.4,
+    isPositive: true,
+    color: '#0A66C2'
+  },
+  {
+    id: 'src-4',
+    name: 'Newsletter (Email)',
+    iconType: 'newsletter',
+    iconEmoji: '📩',
+    sessions: 41650,
+    percentage: 11.2,
+    bounceRate: '16.4%',
+    avgDuration: '6m 15s',
+    change: 18.9,
+    isPositive: true,
+    color: '#8B5CF6'
+  },
+  {
+    id: 'src-5',
+    name: 'Facebook',
+    iconType: 'facebook',
+    iconEmoji: '📱',
+    sessions: 24300,
+    percentage: 6.5,
+    bounceRate: '39.8%',
+    avgDuration: '3m 10s',
+    change: -2.1,
+    isPositive: false,
+    color: '#1877F2'
+  },
+  {
+    id: 'src-6',
+    name: 'Instagram',
+    iconType: 'instagram',
+    iconEmoji: '📸',
+    sessions: 12600,
+    percentage: 3.5,
+    bounceRate: '42.0%',
+    avgDuration: '2m 45s',
+    change: 5.7,
+    isPositive: true,
+    color: '#E4405F'
+  }
+];
+
+export const INITIAL_ACTIVE_SESSIONS: AdminSession[] = [
+  {
+    id: 'sess-1',
+    deviceName: 'MacBook Pro 16" (M3 Max)',
+    deviceType: 'desktop',
+    browser: 'Chrome 128.0',
+    os: 'macOS Sonoma 14.6',
+    ipAddress: '197.156.104.22',
+    location: 'Addis Ababa, Bole Sub-City (Ethio Telecom)',
+    lastActive: 'Active Now (Current Session)',
+    isCurrent: true
+  },
+  {
+    id: 'sess-2',
+    deviceName: 'iPhone 15 Pro Max',
+    deviceType: 'mobile',
+    browser: 'Mobile Safari 18.0',
+    os: 'iOS 18.0.1',
+    ipAddress: '197.156.88.45',
+    location: 'Addis Ababa, Kazanchis Business District',
+    lastActive: '18 minutes ago',
+    isCurrent: false
+  },
+  {
+    id: 'sess-3',
+    deviceName: 'Newsroom Editorial Workstation 04',
+    deviceType: 'desktop',
+    browser: 'Firefox Developer 129.0',
+    os: 'Ubuntu Linux 24.04 LTS',
+    ipAddress: '196.188.240.12',
+    location: 'Negarit Headquarters, Churchill Ave, Addis Ababa',
+    lastActive: '2 hours ago',
+    isCurrent: false
+  }
+];
+
+export const INITIAL_LOGIN_ACTIVITIES: LoginActivity[] = [
+  {
+    id: 'log-1',
+    timestamp: '2026-09-02 08:45:12',
+    ipAddress: '197.156.104.22',
+    location: 'Addis Ababa, Bole (Ethiopia)',
+    device: 'MacBook Pro',
+    browser: 'Chrome 128.0 (macOS)',
+    status: 'success',
+    action: 'Executive Portal Login via 2FA & Password'
+  },
+  {
+    id: 'log-2',
+    timestamp: '2026-09-01 19:12:04',
+    ipAddress: '197.156.88.45',
+    location: 'Addis Ababa, Kazanchis (Ethiopia)',
+    device: 'iPhone 15 Pro Max',
+    browser: 'Safari (iOS 18.0)',
+    status: 'success',
+    action: 'Mobile Editorial Session Re-authenticated'
+  },
+  {
+    id: 'log-3',
+    timestamp: '2026-09-01 11:30:22',
+    ipAddress: '196.188.240.12',
+    location: 'Churchill Ave Media Hub, Addis Ababa',
+    device: 'Linux Workstation',
+    browser: 'Firefox 129.0 (Ubuntu)',
+    status: 'success',
+    action: 'Editorial Desk Session Initialized'
+  },
+  {
+    id: 'log-4',
+    timestamp: '2026-08-31 03:14:50',
+    ipAddress: '185.220.101.44',
+    location: 'Frankfurt, Germany (Tor Exit Node)',
+    device: 'Unknown Device',
+    browser: 'Python-urllib/3.10',
+    status: 'warning',
+    action: 'Suspicious Brute-force Login Attempt Blocked'
+  },
+  {
+    id: 'log-5',
+    timestamp: '2026-08-30 16:05:11',
+    ipAddress: '197.156.104.22',
+    location: 'Addis Ababa, Bole (Ethiopia)',
+    device: 'MacBook Pro',
+    browser: 'Chrome 128.0 (macOS)',
+    status: 'success',
+    action: 'Security Audit & Master Password Verified'
+  }
+];
+
+export const INITIAL_SECURITY_SETTINGS: SecuritySettings = {
+  twoFactorEnabled: true,
+  twoFactorSecret: 'JBSWY3DPEHPK3PXP',
+  backupCodes: [
+    'NBR-9481-2041',
+    'NBR-8392-1094',
+    'NBR-3829-4720',
+    'NBR-1928-3920',
+    'NBR-5820-9182',
+    'NBR-7391-4829'
+  ],
+  lastPasswordChange: '2026-08-15',
+  sessionTimeoutMinutes: 120
+};
 
 export const INITIAL_SUBSCRIBERS: NewsletterSubscriber[] = [
   {
@@ -890,3 +1153,4 @@ export const INITIAL_SUBSCRIBERS: NewsletterSubscriber[] = [
     status: 'active'
   }
 ];
+

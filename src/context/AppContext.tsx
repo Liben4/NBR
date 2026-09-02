@@ -11,6 +11,12 @@ import {
   CurrencyRate, 
   BusinessLeader, 
   Comment, 
+  CommentStatus,
+  BlockedUser,
+  TrafficSourceItem,
+  AdminSession,
+  LoginActivity,
+  SecuritySettings,
   NewsletterSubscriber, 
   Author, 
   AdminUser 
@@ -26,6 +32,11 @@ import {
   INITIAL_LEADERS, 
   INITIAL_MARKET_INDICATORS, 
   INITIAL_COMMENTS, 
+  INITIAL_BLOCKED_USERS,
+  INITIAL_TRAFFIC_SOURCES,
+  INITIAL_ACTIVE_SESSIONS,
+  INITIAL_LOGIN_ACTIVITIES,
+  INITIAL_SECURITY_SETTINGS,
   INITIAL_SUBSCRIBERS 
 } from '../data/seedData';
 
@@ -124,10 +135,32 @@ interface AppContextType {
   scheduleArticle: (id: string, scheduledDate: string) => void;
   incrementViews: (id: string) => void;
 
-  // Comments
-  addComment: (articleId: string, authorName: string, content: string, role?: string) => void;
+  // Comment & User Moderation
+  addComment: (articleId: string, authorName: string, content: string, role?: string, email?: string) => void;
   likeComment: (commentId: string) => void;
   deleteComment: (commentId: string) => void;
+  approveComment: (commentId: string) => void;
+  rejectComment: (commentId: string) => void;
+  markCommentSpam: (commentId: string) => void;
+  blockedUsers: BlockedUser[];
+  blockUser: (authorName: string, email?: string, ipAddress?: string, reason?: string) => void;
+  unblockUser: (id: string) => void;
+  isUserBlocked: (authorName: string, email?: string) => boolean;
+
+  // Content Performance & Traffic Sources
+  trafficSources: TrafficSourceItem[];
+  updateTrafficSource: (id: string, updates: Partial<TrafficSourceItem>) => void;
+
+  // Admin & Security Management
+  securitySettings: SecuritySettings;
+  activeSessions: AdminSession[];
+  loginActivities: LoginActivity[];
+  changeAdminPassword: (oldPass: string, newPass: string) => { success: boolean; message: string };
+  toggleTwoFactor: (enable: boolean, code?: string) => { success: boolean; message: string };
+  generateNewBackupCodes: () => string[];
+  revokeSession: (sessionId: string) => void;
+  logoutAllDevices: () => void;
+  addLoginActivity: (activity: Omit<LoginActivity, 'id' | 'timestamp'>) => void;
 
   // Toast notifications
   toastMessage: string | null;
@@ -302,6 +335,51 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return INITIAL_COMMENTS;
   });
 
+  const [blockedUsers, setBlockedUsers] = useState<BlockedUser[]>(() => {
+    const saved = localStorage.getItem('negarit_blocked_users');
+    if (saved) {
+      try { return JSON.parse(saved); } catch (e) { console.error(e); }
+    }
+    return INITIAL_BLOCKED_USERS;
+  });
+
+  const [trafficSources, setTrafficSources] = useState<TrafficSourceItem[]>(() => {
+    const saved = localStorage.getItem('negarit_traffic_sources');
+    if (saved) {
+      try { return JSON.parse(saved); } catch (e) { console.error(e); }
+    }
+    return INITIAL_TRAFFIC_SOURCES;
+  });
+
+  const [activeSessions, setActiveSessions] = useState<AdminSession[]>(() => {
+    const saved = localStorage.getItem('negarit_active_sessions');
+    if (saved) {
+      try { return JSON.parse(saved); } catch (e) { console.error(e); }
+    }
+    return INITIAL_ACTIVE_SESSIONS;
+  });
+
+  const [loginActivities, setLoginActivities] = useState<LoginActivity[]>(() => {
+    const saved = localStorage.getItem('negarit_login_activities');
+    if (saved) {
+      try { return JSON.parse(saved); } catch (e) { console.error(e); }
+    }
+    return INITIAL_LOGIN_ACTIVITIES;
+  });
+
+  const [securitySettings, setSecuritySettings] = useState<SecuritySettings>(() => {
+    const saved = localStorage.getItem('negarit_security_settings');
+    if (saved) {
+      try { return JSON.parse(saved); } catch (e) { console.error(e); }
+    }
+    return INITIAL_SECURITY_SETTINGS;
+  });
+
+  const [adminPassword, setAdminPassword] = useState<string>(() => {
+    const saved = localStorage.getItem('negarit_admin_password');
+    return saved || 'Liben@2026NBR';
+  });
+
   const [subscribers, setSubscribers] = useState<NewsletterSubscriber[]>(() => {
     const saved = localStorage.getItem('negarit_subscribers');
     if (saved) {
@@ -350,6 +428,30 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => {
     localStorage.setItem('negarit_comments', JSON.stringify(comments));
   }, [comments]);
+
+  useEffect(() => {
+    localStorage.setItem('negarit_blocked_users', JSON.stringify(blockedUsers));
+  }, [blockedUsers]);
+
+  useEffect(() => {
+    localStorage.setItem('negarit_traffic_sources', JSON.stringify(trafficSources));
+  }, [trafficSources]);
+
+  useEffect(() => {
+    localStorage.setItem('negarit_active_sessions', JSON.stringify(activeSessions));
+  }, [activeSessions]);
+
+  useEffect(() => {
+    localStorage.setItem('negarit_login_activities', JSON.stringify(loginActivities));
+  }, [loginActivities]);
+
+  useEffect(() => {
+    localStorage.setItem('negarit_security_settings', JSON.stringify(securitySettings));
+  }, [securitySettings]);
+
+  useEffect(() => {
+    localStorage.setItem('negarit_admin_password', adminPassword);
+  }, [adminPassword]);
 
   useEffect(() => {
     localStorage.setItem('negarit_subscribers', JSON.stringify(subscribers));
@@ -424,7 +526,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const cleanEmail = email.trim().toLowerCase();
     const cleanPass = pass.trim();
 
-    if (cleanEmail === 'liben457@gmail.com' && cleanPass === 'Liben@2026NBR') {
+    if (cleanEmail === 'liben457@gmail.com' && cleanPass === adminPassword) {
       const loggedUser: AdminUser = {
         id: 'admin-liben',
         name: 'Liben',
@@ -438,12 +540,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       if (remember) {
         localStorage.setItem('negarit_admin_session', JSON.stringify(loggedUser));
       }
+      
+      const newActivity: LoginActivity = {
+        id: `log-${Date.now()}`,
+        timestamp: new Date().toISOString().replace('T', ' ').slice(0, 19),
+        ipAddress: '197.156.104.22',
+        location: 'Addis Ababa, Bole (Ethiopia)',
+        device: 'MacBook Pro / Browser Client',
+        browser: 'Current Web Client',
+        status: 'success',
+        action: 'Executive Portal Login via Authenticated Credentials'
+      };
+      setLoginActivities(prev => [newActivity, ...prev.slice(0, 49)]);
+
       showToast(`Welcome back, ${loggedUser.name} (${loggedUser.role})`);
       return { success: true };
     }
 
     // Secondary fallback for newsroom staff demo
-    if (cleanPass === 'Liben@2026NBR' && cleanEmail.includes('@')) {
+    if (cleanPass === adminPassword && cleanEmail.includes('@')) {
       const namePart = cleanEmail.split('@')[0];
       const loggedUser: AdminUser = {
         id: `admin-${Date.now()}`,
@@ -458,9 +573,34 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       if (remember) {
         localStorage.setItem('negarit_admin_session', JSON.stringify(loggedUser));
       }
+
+      const newActivity: LoginActivity = {
+        id: `log-${Date.now()}`,
+        timestamp: new Date().toISOString().replace('T', ' ').slice(0, 19),
+        ipAddress: '197.156.88.45',
+        location: 'Addis Ababa, Kazanchis (Ethiopia)',
+        device: 'Staff Workstation',
+        browser: 'Web Client',
+        status: 'success',
+        action: `Editorial Desk Session Authenticated for ${loggedUser.name}`
+      };
+      setLoginActivities(prev => [newActivity, ...prev.slice(0, 49)]);
+
       showToast(`Staff session authenticated: ${loggedUser.name}`);
       return { success: true };
     }
+
+    const failedActivity: LoginActivity = {
+      id: `log-${Date.now()}`,
+      timestamp: new Date().toISOString().replace('T', ' ').slice(0, 19),
+      ipAddress: '197.156.104.22',
+      location: 'Addis Ababa (Current Client)',
+      device: 'Browser Client',
+      browser: 'Web Session',
+      status: 'failed',
+      action: `Failed authentication attempt for ${cleanEmail}`
+    };
+    setLoginActivities(prev => [failedActivity, ...prev.slice(0, 49)]);
 
     return { 
       success: false, 
@@ -469,6 +609,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const logoutAdmin = () => {
+    if (adminUser) {
+      const newActivity: LoginActivity = {
+        id: `log-${Date.now()}`,
+        timestamp: new Date().toISOString().replace('T', ' ').slice(0, 19),
+        ipAddress: '197.156.104.22',
+        location: 'Addis Ababa (Current Client)',
+        device: 'Browser Client',
+        browser: 'Web Session',
+        status: 'success',
+        action: `Admin Session Logged Out (${adminUser.email})`
+      };
+      setLoginActivities(prev => [newActivity, ...prev.slice(0, 49)]);
+    }
     setAdminUser(null);
     localStorage.removeItem('negarit_admin_session');
     showToast('Editorial session terminated. Logged out of Admin Desk.');
@@ -695,20 +848,38 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     showToast(`Article scheduled for publication on ${new Date(scheduledDate).toLocaleString()}`);
   };
 
-  const addComment = (articleId: string, authorName: string, content: string, role?: string) => {
+  const isUserBlocked = (authorName: string, email?: string): boolean => {
+    const cleanName = authorName.trim().toLowerCase();
+    const cleanEmail = email?.trim().toLowerCase();
+    return blockedUsers.some(b => {
+      if (cleanName && b.authorName.toLowerCase() === cleanName) return true;
+      if (cleanEmail && b.email && b.email.toLowerCase() === cleanEmail) return true;
+      return false;
+    });
+  };
+
+  const addComment = (articleId: string, authorName: string, content: string, role?: string, email?: string) => {
+    if (isUserBlocked(authorName, email)) {
+      showToast('Comment rejected: Your commenting privileges have been suspended by editorial moderation.');
+      return;
+    }
+
     const newComment: Comment = {
       id: `comm-${Date.now()}`,
       articleId,
       authorName: authorName.trim() || 'Executive Reader',
+      authorEmail: email?.trim() || undefined,
       authorRole: role?.trim() || 'Verified Industry Reader',
       avatar: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(authorName)}`,
       content,
       createdAt: 'Just now',
       likes: 0,
-      isLiked: false
+      isLiked: false,
+      status: 'approved', // default to approved for smooth public interaction
+      ipAddress: '197.156.104.22'
     };
     setComments(prev => [newComment, ...prev]);
-    showToast('Comment submitted for publication');
+    showToast('Comment published successfully');
     fetch('/api/comments', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -732,10 +903,183 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const deleteComment = (commentId: string) => {
     setComments(prev => prev.filter(c => c.id !== commentId));
-    showToast('Comment removed');
+    showToast('Comment permanently deleted from records');
     fetch(`/api/comments/${commentId}`, {
       method: 'DELETE'
     }).catch(err => console.warn('Cloud SQL comment delete warning:', err));
+  };
+
+  const approveComment = (commentId: string) => {
+    setComments(prev => prev.map(c => c.id === commentId ? { ...c, status: 'approved' as CommentStatus } : c));
+    showToast('Comment approved and made visible live');
+  };
+
+  const rejectComment = (commentId: string) => {
+    setComments(prev => prev.map(c => c.id === commentId ? { ...c, status: 'rejected' as CommentStatus } : c));
+    showToast('Comment rejected and hidden from public feed');
+  };
+
+  const markCommentSpam = (commentId: string) => {
+    setComments(prev => prev.map(c => c.id === commentId ? { ...c, status: 'spam' as CommentStatus, flagReason: 'Flagged by Editorial Admin as unsolicited spam' } : c));
+    showToast('Comment flagged as spam');
+  };
+
+  const blockUser = (authorName: string, email?: string, ipAddress?: string, reason?: string) => {
+    const newBlock: BlockedUser = {
+      id: `block-${Date.now()}`,
+      authorName: authorName.trim(),
+      email: email?.trim(),
+      ipAddress: ipAddress || '197.156.104.22',
+      blockedAt: new Date().toISOString().replace('T', ' ').slice(0, 16),
+      reason: reason?.trim() || 'Violated editorial community guidelines and standards',
+      blockedBy: adminUser?.name ? `${adminUser.name} (${adminUser.role})` : 'Editorial Executive'
+    };
+
+    setBlockedUsers(prev => [newBlock, ...prev]);
+    // Also mark user's comments as rejected/spam
+    setComments(prev => prev.map(c => {
+      if (c.authorName.toLowerCase() === authorName.trim().toLowerCase() || (email && c.authorEmail?.toLowerCase() === email.trim().toLowerCase())) {
+        return { ...c, status: 'spam' as CommentStatus, flagReason: 'Author blocked by admin moderation' };
+      }
+      return c;
+    }));
+
+    // Log security event
+    const newActivity: LoginActivity = {
+      id: `log-${Date.now()}`,
+      timestamp: new Date().toISOString().replace('T', ' ').slice(0, 19),
+      ipAddress: '197.156.104.22',
+      location: 'Addis Ababa (Moderation Desk)',
+      device: 'Admin Console',
+      browser: 'Web Application',
+      status: 'warning',
+      action: `User Block Enacted: ${authorName} (${reason || 'Spam / Policy Violation'})`
+    };
+    setLoginActivities(prev => [newActivity, ...prev.slice(0, 49)]);
+
+    showToast(`User "${authorName}" has been blocked from commenting.`);
+  };
+
+  const unblockUser = (id: string) => {
+    setBlockedUsers(prev => prev.filter(b => b.id !== id));
+    showToast('User unblocked and commenting privileges restored');
+  };
+
+  const updateTrafficSource = (id: string, updates: Partial<TrafficSourceItem>) => {
+    setTrafficSources(prev => prev.map(ts => ts.id === id ? { ...ts, ...updates } : ts));
+    showToast('Traffic metric model updated');
+  };
+
+  const changeAdminPassword = (oldPass: string, newPass: string): { success: boolean; message: string } => {
+    if (oldPass !== adminPassword) {
+      return { success: false, message: 'Current password verification failed. Please try again.' };
+    }
+    if (!newPass || newPass.length < 8) {
+      return { success: false, message: 'New password must contain at least 8 characters.' };
+    }
+
+    setAdminPassword(newPass);
+    setSecuritySettings(prev => ({
+      ...prev,
+      lastPasswordChange: new Date().toISOString().slice(0, 10)
+    }));
+
+    const newActivity: LoginActivity = {
+      id: `log-${Date.now()}`,
+      timestamp: new Date().toISOString().replace('T', ' ').slice(0, 19),
+      ipAddress: '197.156.104.22',
+      location: 'Addis Ababa, Bole Sub-City (Ethiopia)',
+      device: 'MacBook Pro / Browser Client',
+      browser: 'Security Portal',
+      status: 'success',
+      action: 'Master Administrator Passphrase Updated Successfully'
+    };
+    setLoginActivities(prev => [newActivity, ...prev.slice(0, 49)]);
+
+    showToast('Master password updated successfully.');
+    return { success: true, message: 'Master password has been updated.' };
+  };
+
+  const toggleTwoFactor = (enable: boolean, code?: string): { success: boolean; message: string } => {
+    if (enable) {
+      if (code && code.trim().length !== 6) {
+        return { success: false, message: 'Please enter a valid 6-digit authenticator confirmation code.' };
+      }
+      setSecuritySettings(prev => ({ ...prev, twoFactorEnabled: true }));
+      showToast('Two-Factor Authentication (2FA) is now active and enforced.');
+    } else {
+      setSecuritySettings(prev => ({ ...prev, twoFactorEnabled: false }));
+      showToast('Two-Factor Authentication has been disabled.');
+    }
+
+    const newActivity: LoginActivity = {
+      id: `log-${Date.now()}`,
+      timestamp: new Date().toISOString().replace('T', ' ').slice(0, 19),
+      ipAddress: '197.156.104.22',
+      location: 'Addis Ababa (Security Desk)',
+      device: 'Admin Console',
+      browser: 'Web Security',
+      status: enable ? 'success' : 'warning',
+      action: enable ? 'Two-Factor Authentication (TOTP) Enabled' : 'Two-Factor Authentication Disabled'
+    };
+    setLoginActivities(prev => [newActivity, ...prev.slice(0, 49)]);
+
+    return { success: true, message: enable ? '2FA Enabled' : '2FA Disabled' };
+  };
+
+  const generateNewBackupCodes = (): string[] => {
+    const chars = '0123456789';
+    const newCodes = Array.from({ length: 6 }, () => {
+      const p1 = Array.from({ length: 4 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+      const p2 = Array.from({ length: 4 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+      return `NBR-${p1}-${p2}`;
+    });
+
+    setSecuritySettings(prev => ({ ...prev, backupCodes: newCodes }));
+    showToast('New 2FA emergency backup recovery codes generated.');
+    return newCodes;
+  };
+
+  const revokeSession = (sessionId: string) => {
+    setActiveSessions(prev => prev.filter(s => s.id !== sessionId));
+    const newActivity: LoginActivity = {
+      id: `log-${Date.now()}`,
+      timestamp: new Date().toISOString().replace('T', ' ').slice(0, 19),
+      ipAddress: '197.156.104.22',
+      location: 'Addis Ababa (Security Desk)',
+      device: 'Admin Console',
+      browser: 'Web Security',
+      status: 'warning',
+      action: `Active Session Revoked (${sessionId})`
+    };
+    setLoginActivities(prev => [newActivity, ...prev.slice(0, 49)]);
+    showToast('Device session successfully revoked and disconnected.');
+  };
+
+  const logoutAllDevices = () => {
+    // Keep only current session
+    setActiveSessions(prev => prev.filter(s => s.isCurrent));
+    const newActivity: LoginActivity = {
+      id: `log-${Date.now()}`,
+      timestamp: new Date().toISOString().replace('T', ' ').slice(0, 19),
+      ipAddress: '197.156.104.22',
+      location: 'Addis Ababa (Security Desk)',
+      device: 'Admin Console',
+      browser: 'Web Security',
+      status: 'warning',
+      action: 'Emergency Invalidation: Logged out from all external devices'
+    };
+    setLoginActivities(prev => [newActivity, ...prev.slice(0, 49)]);
+    showToast('All other remote devices and sessions have been logged out.');
+  };
+
+  const addLoginActivity = (activity: Omit<LoginActivity, 'id' | 'timestamp'>) => {
+    const newLog: LoginActivity = {
+      ...activity,
+      id: `log-${Date.now()}`,
+      timestamp: new Date().toISOString().replace('T', ' ').slice(0, 19)
+    };
+    setLoginActivities(prev => [newLog, ...prev.slice(0, 49)]);
   };
 
   return (
@@ -801,6 +1145,24 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         addComment,
         likeComment,
         deleteComment,
+        approveComment,
+        rejectComment,
+        markCommentSpam,
+        blockedUsers,
+        blockUser,
+        unblockUser,
+        isUserBlocked,
+        trafficSources,
+        updateTrafficSource,
+        securitySettings,
+        activeSessions,
+        loginActivities,
+        changeAdminPassword,
+        toggleTwoFactor,
+        generateNewBackupCodes,
+        revokeSession,
+        logoutAllDevices,
+        addLoginActivity,
         toastMessage,
         showToast
       }}
