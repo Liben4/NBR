@@ -75,41 +75,41 @@ export const SearchModal: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-24 px-4 bg-slate-950/80 backdrop-blur-md animate-fadeIn">
+    <div className="fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-24 px-4 bg-slate-950/70 dark:bg-slate-950/80 backdrop-blur-md animate-fadeIn transition-colors">
       <div 
-        className="relative w-full max-w-3xl bg-slate-900 border border-slate-700 rounded-3xl p-5 sm:p-6 shadow-2xl overflow-hidden flex flex-col max-h-[80vh]"
+        className="relative w-full max-w-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-3xl p-5 sm:p-6 shadow-2xl overflow-hidden flex flex-col max-h-[80vh]"
         onClick={(e) => e.stopPropagation()}
       >
         
         {/* Search Input Bar */}
-        <div className="flex items-center gap-3 pb-4 border-b border-slate-800">
-          <Search className="w-5 h-5 text-blue-400 shrink-0" />
+        <div className="flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-slate-800">
+          <Search className="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0" />
           <input 
             ref={inputRef}
             type="text"
             placeholder="Search articles, companies, topics, economic data, or leaders..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="w-full bg-transparent text-slate-100 placeholder-slate-500 text-sm sm:text-base focus:outline-none"
+            className="w-full bg-transparent text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 text-sm sm:text-base focus:outline-none"
           />
           {query && (
             <button 
               onClick={() => setQuery('')}
-              className="p-1 rounded text-slate-500 hover:text-slate-300"
+              className="p-1 rounded text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
             >
               <X className="w-4 h-4" />
             </button>
           )}
           <button
             onClick={() => setIsSearchOpen(false)}
-            className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white text-xs font-semibold"
+            className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-xs font-semibold"
           >
             ESC
           </button>
         </div>
 
         {/* Quick Filter Categories */}
-        <div className="flex items-center gap-2 py-3 border-b border-slate-800 text-xs overflow-x-auto no-scrollbar">
+        <div className="flex items-center gap-2 py-3 border-b border-slate-100 dark:border-slate-800 text-xs overflow-x-auto no-scrollbar">
           <span className="text-slate-500 font-semibold mr-1">Filter:</span>
           {(['all', 'articles', 'companies', 'topics', 'authors'] as const).map(type => (
             <button
@@ -117,8 +117,8 @@ export const SearchModal: React.FC = () => {
               onClick={() => setActiveType(type)}
               className={`px-3 py-1 rounded-lg capitalize font-medium transition-colors ${
                 activeType === type
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-slate-800/60 text-slate-400 hover:text-slate-200'
+                  ? 'bg-blue-600 text-white shadow-sm'
+                  : 'bg-slate-100 dark:bg-slate-800/60 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
               }`}
             >
               {type}
@@ -131,14 +131,14 @@ export const SearchModal: React.FC = () => {
           
           {/* Quick Suggestions when empty */}
           {!cleanQuery && (
-            <div className="text-xs text-slate-400 mb-2">
-              <span className="font-bold text-slate-300 block mb-2">Trending Searches:</span>
+            <div className="text-xs text-slate-500 dark:text-slate-400 mb-2">
+              <span className="font-bold text-slate-700 dark:text-slate-300 block mb-2">Trending Searches:</span>
               <div className="flex flex-wrap gap-2">
                 {['NBE FX Liberalization', 'ESX Stock Exchange', 'Ethio Telecom Public Float', 'Coffee Export Record', 'GERD Clean Energy', 'Safaricom M-Pesa'].map(t => (
                   <button
                     key={t}
                     onClick={() => setQuery(t)}
-                    className="px-2.5 py-1 rounded-md bg-slate-800/80 hover:bg-slate-800 text-slate-300 border border-slate-700/60 transition-colors"
+                    className="px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 dark:bg-slate-800/80 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700/60 transition-colors"
                   >
                     #{t}
                   </button>
@@ -150,7 +150,7 @@ export const SearchModal: React.FC = () => {
           {/* Leaders matches */}
           {matchedLeaders.length > 0 && (
             <div>
-              <h4 className="text-[11px] font-brand font-bold uppercase tracking-widest text-amber-400 mb-2">
+              <h4 className="text-[11px] font-brand font-bold uppercase tracking-widest text-amber-600 dark:text-amber-400 mb-2">
                 Executive Leaders ({matchedLeaders.length})
               </h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -158,7 +158,7 @@ export const SearchModal: React.FC = () => {
                   <div
                     key={l.id}
                     onClick={() => handleLeaderClick(l)}
-                    className="p-2.5 rounded-xl bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 cursor-pointer flex items-center gap-3"
+                    className="p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 dark:bg-slate-800/60 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700/60 cursor-pointer flex items-center gap-3 shadow-sm"
                   >
                     <img 
                       src={l.avatar} 
@@ -167,8 +167,8 @@ export const SearchModal: React.FC = () => {
                       referrerPolicy="no-referrer"
                     />
                     <div className="min-w-0">
-                      <p className="font-bold text-xs text-slate-200 truncate">{l.name}</p>
-                      <p className="text-[10px] text-slate-400 truncate">{l.position} • {l.organization}</p>
+                      <p className="font-bold text-xs text-slate-800 dark:text-slate-200 truncate">{l.name}</p>
+                      <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate">{l.position} • {l.organization}</p>
                     </div>
                   </div>
                 ))}
@@ -178,7 +178,7 @@ export const SearchModal: React.FC = () => {
 
           {/* Articles list */}
           <div>
-            <h4 className="text-[11px] font-brand font-bold uppercase tracking-widest text-blue-400 mb-2">
+            <h4 className="text-[11px] font-brand font-bold uppercase tracking-widest text-blue-600 dark:text-blue-400 mb-2">
               {cleanQuery ? `Articles & Briefings (${matchedArticles.length})` : 'Recommended Briefings'}
             </h4>
 
@@ -192,9 +192,9 @@ export const SearchModal: React.FC = () => {
                   <div
                     key={article.id}
                     onClick={() => handleArticleClick(article)}
-                    className="p-3 rounded-xl bg-slate-800/40 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 cursor-pointer transition-all flex gap-3 items-center group"
+                    className="p-3 rounded-xl bg-slate-50 hover:bg-slate-100 dark:bg-slate-800/40 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 cursor-pointer transition-all flex gap-3 items-center group shadow-sm"
                   >
-                    <div className="w-16 h-16 rounded-lg overflow-hidden shrink-0 bg-slate-800">
+                    <div className="w-16 h-16 rounded-lg overflow-hidden shrink-0 bg-slate-100 dark:bg-slate-800">
                       <img 
                         src={article.featuredImage} 
                         alt={article.title}
@@ -204,20 +204,20 @@ export const SearchModal: React.FC = () => {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-0.5">
-                        <span className="text-[10px] font-bold uppercase text-blue-400">
+                        <span className="text-[10px] font-bold uppercase text-blue-600 dark:text-blue-400">
                           {article.category}
                         </span>
-                        <span className="text-slate-600 text-xs">•</span>
-                        <span className="text-[10px] text-slate-400">{article.readTime}</span>
+                        <span className="text-slate-400 dark:text-slate-600 text-xs">•</span>
+                        <span className="text-[10px] text-slate-500 dark:text-slate-400">{article.readTime}</span>
                       </div>
-                      <h5 className="font-editorial text-sm font-semibold text-slate-200 group-hover:text-amber-300 transition-colors line-clamp-1">
+                      <h5 className="font-editorial text-sm font-semibold text-slate-900 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-amber-300 transition-colors line-clamp-1">
                         {article.title}
                       </h5>
-                      <p className="text-[11px] text-slate-400 truncate mt-0.5">
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5">
                         {article.subtitle}
                       </p>
                     </div>
-                    <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-white group-hover:translate-x-1 transition-all shrink-0" />
+                    <ArrowRight className="w-4 h-4 text-slate-400 dark:text-slate-500 group-hover:text-slate-900 dark:group-hover:text-white group-hover:translate-x-1 transition-all shrink-0" />
                   </div>
                 ))}
               </div>
@@ -227,7 +227,7 @@ export const SearchModal: React.FC = () => {
         </div>
 
         {/* Modal Footer */}
-        <div className="pt-3 border-t border-slate-800 flex items-center justify-between text-xs text-slate-500">
+        <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500">
           <span>Search Negarit Archive</span>
           <span>Press ESC to close</span>
         </div>

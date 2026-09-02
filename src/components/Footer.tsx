@@ -3,13 +3,8 @@ import {
   Shield, 
   Mail, 
   MapPin, 
-  Send, 
   ArrowUp, 
   Globe, 
-  Linkedin, 
-  Twitter, 
-  Radio, 
-  Compass, 
   Sparkles,
   LogOut,
   ShieldCheck
@@ -17,9 +12,11 @@ import {
 import { useApp } from '../context/AppContext';
 import { CategoryType } from '../types';
 import { BrandLogo } from './BrandLogo';
+import { SocialLinks } from './SocialLinks';
 
 export const Footer: React.FC = () => {
   const { 
+    isDarkMode,
     setCurrentView, 
     setSelectedCategory, 
     setIsNewsletterModalOpen,
@@ -39,7 +36,7 @@ export const Footer: React.FC = () => {
   };
 
   return (
-    <footer className="w-full bg-slate-950 border-t border-slate-800 text-slate-400 font-sans text-xs relative overflow-hidden">
+    <footer className="w-full bg-slate-900 dark:bg-slate-950 border-t border-slate-800 text-slate-400 font-sans text-xs relative overflow-hidden transition-colors duration-200">
       
       {/* Top Banner Accent */}
       <div className="h-1 w-full bg-gradient-to-r from-blue-600 via-amber-400 to-blue-600" />
@@ -47,10 +44,10 @@ export const Footer: React.FC = () => {
       {/* Main Footer Container */}
       <div className="max-w-7xl mx-auto px-4 sm:px-8 py-12 lg:py-16">
         
-        {/* Top Grid: Brand & Categories */}
+        {/* Top Grid: Brand, Social Channels & Categories */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-12 pb-12 border-b border-slate-800">
           
-          {/* Column 1: Brand (5 cols) */}
+          {/* Column 1: Brand & Official Channels (5 cols) */}
           <div className="lg:col-span-5 space-y-4">
             {/* Logo */}
             <div 
@@ -68,7 +65,7 @@ export const Footer: React.FC = () => {
               Ethiopia’s premier independent digital publication for macroeconomic intelligence, capital markets, enterprise innovation, and high-level corporate analysis.
             </p>
 
-            <div className="space-y-1.5 text-[11px] text-slate-500">
+            <div className="space-y-1.5 text-[11px] text-slate-400">
               <div className="flex items-center gap-2">
                 <MapPin className="w-3.5 h-3.5 text-blue-400 shrink-0" />
                 <span>Bole Commercial District, Addis Ababa, Ethiopia</span>
@@ -79,35 +76,12 @@ export const Footer: React.FC = () => {
               </div>
             </div>
 
-            {/* Social Channels */}
-            <div className="flex items-center gap-3 pt-2">
-              <a 
-                href="https://linkedin.com" 
-                target="_blank" 
-                rel="noreferrer"
-                className="w-8 h-8 rounded-lg bg-slate-900 hover:bg-blue-600 hover:text-white text-slate-400 border border-slate-800 flex items-center justify-center transition-colors"
-                title="LinkedIn"
-              >
-                <Linkedin className="w-4 h-4" />
-              </a>
-              <a 
-                href="https://twitter.com" 
-                target="_blank" 
-                rel="noreferrer"
-                className="w-8 h-8 rounded-lg bg-slate-900 hover:bg-slate-800 hover:text-white text-slate-400 border border-slate-800 flex items-center justify-center transition-colors"
-                title="Twitter"
-              >
-                <Twitter className="w-4 h-4" />
-              </a>
-              <a 
-                href="https://t.me" 
-                target="_blank" 
-                rel="noreferrer"
-                className="w-8 h-8 rounded-lg bg-slate-900 hover:bg-blue-500 hover:text-white text-slate-400 border border-slate-800 flex items-center justify-center transition-colors"
-                title="Telegram Broadcast"
-              >
-                <Send className="w-4 h-4" />
-              </a>
+            {/* Social Media Follow Grid (LinkedIn, Facebook, Telegram, X, WhatsApp) */}
+            <div className="pt-2">
+              <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-300 mb-2">
+                Follow Negarit Business Review
+              </h4>
+              <SocialLinks variant="footer-grid" />
             </div>
           </div>
 
@@ -169,7 +143,7 @@ export const Footer: React.FC = () => {
                 </button>
               </li>
               {isAdminLoggedIn && (
-                <li className="pt-2 border-t border-slate-850">
+                <li className="pt-2 border-t border-slate-800">
                   <div className="flex items-center justify-between text-[11px]">
                     <button
                       onClick={() => {
@@ -196,7 +170,7 @@ export const Footer: React.FC = () => {
             </ul>
 
             {/* Newsletter quick box in footer */}
-            <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800 mt-4">
+            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 mt-4">
               <p className="text-[11px] text-slate-300 font-semibold mb-2">
                 Join our 28,000+ subscriber corporate network.
               </p>
@@ -226,7 +200,7 @@ export const Footer: React.FC = () => {
 
             <button
               onClick={scrollToTop}
-              className="p-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white border border-slate-800 transition-colors inline-flex items-center gap-1"
+              className="p-2 rounded-lg bg-slate-950 hover:bg-slate-800 text-slate-400 hover:text-white border border-slate-800 transition-colors inline-flex items-center gap-1"
               title="Back to Top"
             >
               <ArrowUp className="w-3.5 h-3.5" />
@@ -239,3 +213,4 @@ export const Footer: React.FC = () => {
     </footer>
   );
 };
+

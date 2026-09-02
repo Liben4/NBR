@@ -80,16 +80,16 @@ export const FeaturedCategories: React.FC = () => {
   };
 
   return (
-    <section className="w-full max-w-7xl mx-auto px-4 sm:px-8 py-8">
+    <section className="w-full max-w-7xl mx-auto px-4 sm:px-8 py-8 transition-colors duration-200">
       
       {/* Category Section Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4 border-b border-slate-800 mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4 border-b border-slate-200 dark:border-slate-800 mb-6">
         <div>
-          <div className="flex items-center gap-2 text-amber-400 font-brand text-xs uppercase tracking-widest font-bold">
+          <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400 font-brand text-xs uppercase tracking-widest font-bold">
             <Sparkles className="w-4 h-4" />
             <span>Curated Desks</span>
           </div>
-          <h2 className="font-editorial text-2xl sm:text-3xl font-bold text-slate-100 mt-1">
+          <h2 className="font-editorial text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100 mt-1">
             Featured Sectors & Coverage
           </h2>
         </div>
@@ -105,8 +105,8 @@ export const FeaturedCategories: React.FC = () => {
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${
                   isSelected
-                    ? 'bg-blue-600 text-white shadow-md shadow-blue-900/30'
-                    : 'bg-slate-900 text-slate-400 hover:text-slate-200 hover:bg-slate-800 border border-slate-800'
+                    ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20'
+                    : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 shadow-sm'
                 }`}
               >
                 <Icon className="w-3.5 h-3.5" />
@@ -118,21 +118,21 @@ export const FeaturedCategories: React.FC = () => {
       </div>
 
       {/* Dynamic Category Showcase Grid */}
-      <div className="bg-slate-900/50 border border-slate-800/80 rounded-2xl p-4 sm:p-6">
+      <div className="bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800/80 rounded-2xl p-4 sm:p-6 shadow-sm">
         
         {/* Category Header Banner */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 mb-6 border-b border-slate-800/60">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 mb-6 border-b border-slate-100 dark:border-slate-800/60">
           <div>
-            <h3 className="font-editorial text-xl font-bold text-slate-100 flex items-center gap-2">
-              <currentConfig.icon className="w-5 h-5 text-blue-400" />
+            <h3 className="font-editorial text-xl font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+              <currentConfig.icon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
               {currentConfig.title}
             </h3>
-            <p className="text-xs text-slate-400 mt-0.5">{currentConfig.subtitle}</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{currentConfig.subtitle}</p>
           </div>
 
           <button
             onClick={handleExploreMore}
-            className="self-start sm:self-auto inline-flex items-center gap-1 text-xs font-semibold text-blue-400 hover:text-blue-300 transition-colors"
+            className="self-start sm:self-auto inline-flex items-center gap-1 text-xs font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
           >
             <span>View all {activeTab} coverage</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -146,16 +146,16 @@ export const FeaturedCategories: React.FC = () => {
           {featured && (
             <div 
               onClick={() => openArticle(featured)}
-              className="lg:col-span-7 group cursor-pointer flex flex-col justify-between rounded-xl bg-slate-900 border border-slate-800/80 hover:border-slate-700 overflow-hidden transition-all duration-300"
+              className="lg:col-span-7 group cursor-pointer flex flex-col justify-between rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700 overflow-hidden transition-all duration-300"
             >
-              <div className="relative aspect-video w-full overflow-hidden bg-slate-800">
+              <div className="relative aspect-video w-full overflow-hidden bg-slate-200 dark:bg-slate-800">
                 <img 
                   src={featured.featuredImage} 
                   alt={featured.title}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   referrerPolicy="no-referrer"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent" />
                 <span className="absolute bottom-3 left-3 px-2.5 py-0.5 rounded bg-blue-600 text-white text-[11px] font-bold uppercase tracking-wider">
                   Featured {featured.category} Story
                 </span>
@@ -163,18 +163,18 @@ export const FeaturedCategories: React.FC = () => {
 
               <div className="p-5 flex flex-col justify-between flex-grow">
                 <div>
-                  <h4 className="font-editorial text-xl sm:text-2xl font-bold text-slate-100 group-hover:text-blue-400 transition-colors leading-snug">
+                  <h4 className="font-editorial text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors leading-snug">
                     {featured.title}
                   </h4>
-                  <p className="text-slate-400 text-xs sm:text-sm mt-2 line-clamp-2">
+                  <p className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm mt-2 line-clamp-2">
                     {featured.subtitle || featured.excerpt}
                   </p>
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
-                  <span className="font-medium text-slate-300">{featured.author.name}</span>
+                <div className="mt-4 pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+                  <span className="font-medium text-slate-700 dark:text-slate-300">{featured.author.name}</span>
                   <span className="flex items-center gap-1">
-                    <Clock className="w-3 h-3 text-slate-500" />
+                    <Clock className="w-3 h-3 text-slate-400" />
                     {featured.readTime}
                   </span>
                 </div>
@@ -188,9 +188,9 @@ export const FeaturedCategories: React.FC = () => {
               <div
                 key={`cat-side-${article.id}`}
                 onClick={() => openArticle(article)}
-                className="group/side cursor-pointer p-3.5 rounded-xl bg-slate-900/80 hover:bg-slate-800/80 border border-slate-800/80 hover:border-slate-700 transition-all flex gap-3.5 items-center"
+                className="group/side cursor-pointer p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900/80 hover:bg-slate-100 dark:hover:bg-slate-800/80 border border-slate-200 dark:border-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700 transition-all flex gap-3.5 items-center"
               >
-                <div className="w-20 h-20 rounded-lg overflow-hidden shrink-0 bg-slate-800">
+                <div className="w-20 h-20 rounded-lg overflow-hidden shrink-0 bg-slate-200 dark:bg-slate-800">
                   <img 
                     src={article.featuredImage} 
                     alt={article.title}
@@ -201,13 +201,13 @@ export const FeaturedCategories: React.FC = () => {
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
                       {article.category}
                     </span>
-                    <span className="text-slate-600 text-xs">•</span>
-                    <span className="text-[10px] text-slate-400">{article.readTime}</span>
+                    <span className="text-slate-400 text-xs">•</span>
+                    <span className="text-[10px] text-slate-500 dark:text-slate-400">{article.readTime}</span>
                   </div>
-                  <h5 className="font-editorial text-sm font-semibold text-slate-200 group-hover/side:text-blue-400 transition-colors line-clamp-2 leading-snug">
+                  <h5 className="font-editorial text-sm font-semibold text-slate-800 dark:text-slate-200 group-hover/side:text-blue-600 dark:group-hover/side:text-blue-400 transition-colors line-clamp-2 leading-snug">
                     {article.title}
                   </h5>
                   <span className="text-[11px] text-slate-500 block mt-1">

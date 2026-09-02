@@ -26,11 +26,11 @@ const MainContent: React.FC = () => {
   const { currentView, toastMessage } = useApp();
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-blue-600 selection:text-white">
+    <div className="min-h-screen bg-[#F8FAFC] dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans selection:bg-blue-600 selection:text-white transition-colors duration-200">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-xl bg-slate-900 border border-blue-500/50 text-slate-100 text-xs font-semibold shadow-2xl animate-fadeIn flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
+        <div className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-blue-500/50 text-slate-900 dark:text-slate-100 text-xs font-semibold shadow-2xl animate-fadeIn flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
           <span>{toastMessage}</span>
         </div>
       )}

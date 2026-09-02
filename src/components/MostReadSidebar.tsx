@@ -13,23 +13,23 @@ export const MostReadSidebar: React.FC = () => {
     .slice(0, 5);
 
   return (
-    <aside className="w-full bg-slate-900/70 border border-slate-800 rounded-2xl p-5 shadow-lg">
+    <aside className="w-full bg-white dark:bg-slate-900/70 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm dark:shadow-lg transition-colors duration-200">
       
       {/* Header */}
-      <div className="flex items-center justify-between pb-3 border-b border-slate-800 mb-4">
+      <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800 mb-4">
         <div className="flex items-center gap-2">
           <Flame className="w-4 h-4 text-amber-500 fill-amber-500/20" />
-          <h3 className="font-brand text-xs font-bold uppercase tracking-widest text-slate-200">
+          <h3 className="font-brand text-xs font-bold uppercase tracking-widest text-slate-800 dark:text-slate-200">
             Most Read This Week
           </h3>
         </div>
-        <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">
+        <span className="text-[10px] text-slate-400 dark:text-slate-500 uppercase font-bold tracking-wider">
           Ranked 01–05
         </span>
       </div>
 
       {/* Ranked List */}
-      <div className="divide-y divide-slate-800/80">
+      <div className="divide-y divide-slate-100 dark:divide-slate-800/80">
         {mostReadArticles.map((article: Article, idx: number) => {
           const rank = `0${idx + 1}`;
           return (
@@ -41,29 +41,29 @@ export const MostReadSidebar: React.FC = () => {
               {/* Big Editorial Number */}
               <span className={`font-brand text-2xl sm:text-3xl font-extrabold tracking-tighter shrink-0 transition-colors ${
                 idx === 0 
-                  ? 'text-amber-400' 
+                  ? 'text-amber-500 dark:text-amber-400' 
                   : idx === 1 
-                  ? 'text-blue-400' 
-                  : 'text-slate-600 group-hover:text-slate-400'
+                  ? 'text-blue-600 dark:text-blue-400' 
+                  : 'text-slate-300 dark:text-slate-600 group-hover:text-slate-500 dark:group-hover:text-slate-400'
               }`}>
                 {rank}
               </span>
 
               {/* Content */}
               <div className="flex-1 min-w-0">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-blue-400 block mb-0.5">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 block mb-0.5">
                   {article.category}
                 </span>
                 
-                <h4 className="font-editorial text-sm font-semibold text-slate-200 group-hover:text-amber-300 transition-colors line-clamp-2 leading-snug">
+                <h4 className="font-editorial text-sm font-semibold text-slate-900 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-amber-300 transition-colors line-clamp-2 leading-snug">
                   {article.title}
                 </h4>
 
                 <div className="flex items-center gap-2 mt-1.5 text-[10px] text-slate-500">
                   <span>{article.author.name}</span>
                   <span>•</span>
-                  <span className="flex items-center gap-0.5 text-slate-400">
-                    <TrendingUp className="w-2.5 h-2.5 text-emerald-400" />
+                  <span className="flex items-center gap-0.5 text-slate-500 dark:text-slate-400">
+                    <TrendingUp className="w-2.5 h-2.5 text-emerald-600 dark:text-emerald-400" />
                     {(article.views / 1000).toFixed(1)}k views
                   </span>
                 </div>
