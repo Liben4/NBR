@@ -118,11 +118,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const path = window.location.pathname.toLowerCase();
       const hash = window.location.hash.toLowerCase();
       const search = window.location.search.toLowerCase();
-      if (path === '/admin' || path.endsWith('/admin') || hash.includes('admin') || search.includes('admin')) {
+      if (path === '/admin' || path.startsWith('/admin') || path.endsWith('/admin') || hash.includes('admin') || search.includes('admin')) {
         return 'admin';
       }
-      if (hash.includes('markets') || search.includes('markets')) return 'markets';
-      if (hash.includes('leaders') || search.includes('leaders')) return 'leaders';
+      if (hash.includes('markets') || search.includes('markets') || path.startsWith('/markets')) return 'markets';
+      if (hash.includes('leaders') || search.includes('leaders') || path.startsWith('/leaders')) return 'leaders';
     }
     return 'home';
   };
@@ -140,6 +140,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           if (window.location.pathname !== '/admin') {
             window.history.pushState({ view: 'admin' }, '', '/admin');
           }
+        } else if (view === 'markets') {
+          window.history.pushState({ view: 'markets' }, '', '/#markets');
+        } else if (view === 'leaders') {
+          window.history.pushState({ view: 'leaders' }, '', '/#leaders');
         } else if (view === 'home') {
           if (window.location.pathname !== '/' || window.location.hash || window.location.search) {
             window.history.pushState({ view: 'home' }, '', '/');
@@ -157,8 +161,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const path = window.location.pathname.toLowerCase();
       const hash = window.location.hash.toLowerCase();
       const search = window.location.search.toLowerCase();
-      if (path === '/admin' || path.endsWith('/admin') || hash.includes('admin') || search.includes('admin')) {
+      if (path === '/admin' || path.startsWith('/admin') || path.endsWith('/admin') || hash.includes('admin') || search.includes('admin')) {
         setCurrentViewInternal('admin');
+      } else if (hash.includes('markets') || search.includes('markets') || path.startsWith('/markets')) {
+        setCurrentViewInternal('markets');
+      } else if (hash.includes('leaders') || search.includes('leaders') || path.startsWith('/leaders')) {
+        setCurrentViewInternal('leaders');
       } else if (path === '/' && !hash && !search) {
         setCurrentViewInternal('home');
       }

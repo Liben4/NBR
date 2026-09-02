@@ -201,10 +201,21 @@ export const Footer: React.FC = () => {
             <span className="hidden sm:inline"> • Addis Ababa, Ethiopia.</span>
           </div>
 
-          <div className="flex items-center gap-6">
+          <div className="flex flex-wrap items-center gap-4 sm:gap-6">
             <span className="hover:text-slate-400 cursor-pointer">Privacy Charter</span>
             <span className="hover:text-slate-400 cursor-pointer">Editorial Ethics</span>
             <span className="hover:text-slate-400 cursor-pointer">Terms of Service</span>
+            <button
+              onClick={() => {
+                setCurrentView('admin');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="hover:text-amber-400 text-slate-500 transition-colors cursor-pointer flex items-center gap-1 font-mono text-[10px]"
+              title="Editorial Staff Portal"
+            >
+              <span>Editorial Desk</span>
+              <span>→</span>
+            </button>
 
             <button
               onClick={scrollToTop}
