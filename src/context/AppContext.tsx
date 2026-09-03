@@ -368,16 +368,26 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return INITIAL_MEDIA_ITEMS;
   });
 
-  // Featured Content Configuration
+  // Featured Content Configuration with automatic version migration
   const [featuredConfig, setFeaturedConfig] = useState<FeaturedConfig>(() => {
+    const CURRENT_VERSION = '2026-09-03-v3';
+    const savedVersion = localStorage.getItem('negarit_editorial_version');
     const saved = localStorage.getItem('negarit_featured_config');
-    if (saved) {
-      try { return JSON.parse(saved); } catch (e) { console.error(e); }
+    if (saved && savedVersion === CURRENT_VERSION) {
+      try { 
+        const parsed = JSON.parse(saved);
+        if (parsed.heroArticleId) return parsed;
+      } catch (e) { console.error(e); }
     }
+    // Update to synchronized defaults
+    try {
+      localStorage.setItem('negarit_editorial_version', CURRENT_VERSION);
+      localStorage.setItem('negarit_featured_config', JSON.stringify(INITIAL_FEATURED_CONFIG));
+    } catch (e) {}
     return INITIAL_FEATURED_CONFIG;
   });
 
-  // Persistence
+  // Persistence with ensured hero and lead story alignment
   const [articles, setArticles] = useState<Article[]>(() => {
     const saved = localStorage.getItem('negarit_articles');
     if (saved) {
@@ -385,12 +395,31 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const parsed: Article[] = JSON.parse(saved); 
         const existingIds = new Set(parsed.map(a => a.id));
         const missing = INITIAL_ARTICLES.filter(a => !existingIds.has(a.id));
-        if (missing.length > 0) {
-          const merged = [...parsed, ...missing];
-          try { localStorage.setItem('negarit_articles', JSON.stringify(merged)); } catch (e) {}
-          return merged;
-        }
-        return parsed;
+        const combined = [...parsed, ...missing];
+        
+        // Ensure art-1788436049086 has isHeroFeatured: true, and older articles don't conflict
+        const aligned = combined.map(a => {
+          if (a.id === 'art-1788436049086') {
+            return {
+              ...a,
+              isHeroFeatured: true,
+              featuredImage: '/images/ethio_telecom_horizon.jpg',
+              title: a.title || INITIAL_ARTICLES[0].title
+            };
+          }
+          if (a.id === 'art-1' || a.id === 'wp-359') {
+            return { ...a, isHeroFeatured: false };
+          }
+          return a;
+        });
+
+        // Ensure art-1788436049086 is at index 0 for consistent order
+        const leadArt = aligned.find(a => a.id === 'art-1788436049086') || INITIAL_ARTICLES[0];
+        const restArts = aligned.filter(a => a.id !== 'art-1788436049086');
+        const finalArts = [leadArt, ...restArts];
+
+        try { localStorage.setItem('negarit_articles', JSON.stringify(finalArts)); } catch (e) {}
+        return finalArts;
       } catch (e) { console.error(e); }
     }
     return INITIAL_ARTICLES;
@@ -398,10 +427,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [authors] = useState<Author[]>(INITIAL_AUTHORS);
   const [breakingNews, setBreakingNewsState] = useState<string[]>(() => {
+    const CURRENT_BREAKING_VERSION = '2026-09-03-tewolde-v3';
+    const savedVersion = localStorage.getItem('negarit_breaking_version');
     const saved = localStorage.getItem('negarit_breaking_news');
-    if (saved) {
+    if (saved && savedVersion === CURRENT_BREAKING_VERSION) {
       try { return JSON.parse(saved); } catch (e) { console.error(e); }
     }
+    try {
+      localStorage.setItem('negarit_breaking_version', CURRENT_BREAKING_VERSION);
+      localStorage.setItem('negarit_breaking_news', JSON.stringify(INITIAL_BREAKING_NEWS));
+    } catch (e) {}
     return INITIAL_BREAKING_NEWS;
   });
 

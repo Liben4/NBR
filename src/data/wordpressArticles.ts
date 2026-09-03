@@ -36,7 +36,7 @@ export const WORDPRESS_ARTICLES: Article[] = [
     "featuredImageCredit": "Ethio Telecom Press / Negarit Business Review",
     "sourceReference": "https://negaritbusinessreview.wordpress.com/2026/07/23/ethio-telecom-reports-etb-215-8-billion-revenue-customer-base-reaches-90-1-million/",
     "isBreaking": true,
-    "isHeroFeatured": true,
+    "isHeroFeatured": false,
     "isTopStory": true,
     "isTrending": true,
     "isEditorPick": true,
