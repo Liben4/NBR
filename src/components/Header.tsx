@@ -197,7 +197,12 @@ export const Header: React.FC = () => {
           className="cursor-pointer flex items-center text-center mx-auto lg:mx-0 group transition-transform duration-200 hover:scale-[1.01]"
           title="Negarit Business Review - Home"
         >
-          <BrandLogo variant="horizontal" isDark={isDarkMode} size="lg" />
+          <div className="hidden sm:block">
+            <BrandLogo variant="horizontal" isDark={isDarkMode} size="lg" />
+          </div>
+          <div className="sm:hidden">
+            <BrandLogo variant="horizontal" isDark={isDarkMode} size="sm" />
+          </div>
         </div>
 
         {/* Right: Actions */}

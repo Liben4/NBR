@@ -187,20 +187,41 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       }
       if (hash.includes('markets') || search.includes('markets') || path.startsWith('/markets')) return 'markets';
       if (hash.includes('leaders') || search.includes('leaders') || path.startsWith('/leaders')) return 'leaders';
+      if (hash.includes('article=') || search.includes('article=')) return 'article';
     }
     return 'home';
   };
 
   const [currentView, setCurrentViewInternal] = useState<ViewMode>(getInitialView);
   const [selectedCategory, setSelectedCategory] = useState<CategoryType>('All');
-  const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
+  const [selectedArticle, setSelectedArticle] = useState<Article | null>(() => {
+    if (typeof window !== 'undefined') {
+      const hash = window.location.hash;
+      const search = window.location.search;
+      let targetId = '';
+      if (hash.includes('article=')) {
+        targetId = hash.split('article=')[1]?.split('&')[0];
+      } else if (search.includes('article=')) {
+        targetId = new URLSearchParams(search).get('article=') || '';
+      }
+      if (targetId) {
+        const saved = localStorage.getItem('negarit_articles');
+        const pool: Article[] = saved ? JSON.parse(saved) : INITIAL_ARTICLES;
+        const matched = pool.find(a => a.id === targetId || a.slug === targetId);
+        if (matched) return matched;
+      }
+    }
+    return null;
+  });
   const [selectedLeader, setSelectedLeader] = useState<BusinessLeader | null>(null);
 
   const setCurrentView = (view: ViewMode) => {
     setCurrentViewInternal(view);
     if (typeof window !== 'undefined') {
       try {
-        if (view === 'admin') {
+        if (view === 'article' && selectedArticle) {
+          window.history.pushState({ view: 'article', articleId: selectedArticle.id }, '', `/#article=${selectedArticle.id}`);
+        } else if (view === 'admin') {
           if (window.location.pathname !== '/admin') {
             window.history.pushState({ view: 'admin' }, '', '/admin');
           }
@@ -225,6 +246,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const path = window.location.pathname.toLowerCase();
       const hash = window.location.hash.toLowerCase();
       const search = window.location.search.toLowerCase();
+
+      if (hash.includes('article=')) {
+        const artId = window.location.hash.split('article=')[1]?.split('&')[0];
+        const saved = localStorage.getItem('negarit_articles');
+        const pool: Article[] = saved ? JSON.parse(saved) : INITIAL_ARTICLES;
+        const matched = pool.find(a => a.id === artId || a.slug === artId);
+        if (matched) {
+          setSelectedArticle(matched);
+          setCurrentViewInternal('article');
+          return;
+        }
+      }
+
       if (path === '/admin' || path.startsWith('/admin') || path.endsWith('/admin') || hash.includes('admin') || search.includes('admin')) {
         setCurrentViewInternal('admin');
       } else if (hash.includes('markets') || search.includes('markets') || path.startsWith('/markets')) {
@@ -295,7 +329,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [articles, setArticles] = useState<Article[]>(() => {
     const saved = localStorage.getItem('negarit_articles');
     if (saved) {
-      try { return JSON.parse(saved); } catch (e) { console.error(e); }
+      try { 
+        const parsed: Article[] = JSON.parse(saved); 
+        const existingIds = new Set(parsed.map(a => a.id));
+        const missing = INITIAL_ARTICLES.filter(a => !existingIds.has(a.id));
+        if (missing.length > 0) {
+          const merged = [...parsed, ...missing];
+          try { localStorage.setItem('negarit_articles', JSON.stringify(merged)); } catch (e) {}
+          return merged;
+        }
+        return parsed;
+      } catch (e) { console.error(e); }
     }
     return INITIAL_ARTICLES;
   });
@@ -648,8 +692,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const openArticle = (article: Article) => {
     setSelectedArticle(article);
-    setCurrentView('article');
+    setCurrentViewInternal('article');
     incrementViews(article.id);
+    if (typeof window !== 'undefined') {
+      try {
+        window.history.pushState({ view: 'article', articleId: article.id }, '', `/#article=${article.id}`);
+      } catch (err) {
+        // Fallback for sandboxed environments
+      }
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 

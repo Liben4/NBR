@@ -15,6 +15,7 @@ import {
   LoginActivity,
   SecuritySettings
 } from '../types';
+import { WORDPRESS_ARTICLES } from './wordpressArticles';
 
 export const INITIAL_CATEGORIES: CategoryItem[] = [
   { id: 'cat-1', slug: 'business', name: 'Business', description: 'Corporate governance, mergers, trade partnerships, and enterprise growth in the Horn of Africa.', color: 'blue', order: 1 },
@@ -514,7 +515,8 @@ export const INITIAL_ARTICLES: Article[] = [
     audioDuration: '4:10',
     relatedCompany: 'Industrial Parks Development Corporation',
     status: 'published'
-  }
+  },
+  ...WORDPRESS_ARTICLES
 ];
 
 export const INITIAL_MARKET_INDICATORS: MarketIndicator[] = [

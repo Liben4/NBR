@@ -40,7 +40,7 @@ export const LatestNewsGrid: React.FC = () => {
   };
 
   return (
-    <section className="w-full max-w-7xl mx-auto px-4 sm:px-8 py-8">
+    <section className="w-full">
       
       {/* Section Top Header & Filters */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-4 border-b border-slate-200 dark:border-slate-800 mb-6">
@@ -94,7 +94,7 @@ export const LatestNewsGrid: React.FC = () => {
 
       {/* Articles Container */}
       {viewMode === 'grid' ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           {filteredArticles.map((article: Article) => (
             <article
               key={article.id}
