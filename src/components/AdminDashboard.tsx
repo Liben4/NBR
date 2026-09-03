@@ -1218,12 +1218,15 @@ export const AdminDashboard: React.FC = () => {
                 </p>
 
                 <select
-                  value={articles.find(a => a.isHeroFeatured)?.id || articles[0]?.id}
+                  value={featuredConfig?.heroArticleId || articles.find(a => a.isHeroFeatured)?.id || articles[0]?.id}
                   onChange={(e) => {
                     const targetId = e.target.value;
                     articles.forEach(a => {
-                      updateArticle(a.id, { isHeroFeatured: a.id === targetId });
+                      if (a.isHeroFeatured !== (a.id === targetId)) {
+                        updateArticle(a.id, { isHeroFeatured: a.id === targetId });
+                      }
                     });
+                    updateFeaturedConfig({ heroArticleId: targetId });
                     showToast('Lead Hero Story updated');
                   }}
                   className="w-full px-3 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-xs sm:text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -1237,7 +1240,10 @@ export const AdminDashboard: React.FC = () => {
 
                 {/* Current Hero Preview Card */}
                 {(() => {
-                  const heroArt = articles.find(a => a.isHeroFeatured) || articles[0];
+                  const heroArt = 
+                    (featuredConfig?.heroArticleId ? articles.find(a => a.id === featuredConfig.heroArticleId) : null) ||
+                    articles.find(a => a.isHeroFeatured) || 
+                    articles[0];
                   if (!heroArt) return null;
                   return (
                     <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800 flex items-center gap-3">

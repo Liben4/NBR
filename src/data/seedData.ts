@@ -119,16 +119,17 @@ export const INITIAL_MEDIA_ITEMS: MediaItem[] = [
 
 export const INITIAL_FEATURED_CONFIG: FeaturedConfig = {
   breakingNewsTicker: [
+    'Tewolde Gebremariam Appointed Air India Limited CEO and Managing Director',
     'NBE FX Liberalization: Interbank foreign currency market liquidity surges 38% as commercial banks adjust spread margins',
     'Ethiopian Securities Exchange (ESX) secures initial public listings pipeline ahead of landmark debut trading quarter',
     'Ethio Telecom and Safaricom Ethiopia expand interoperable mobile money integrations via Telebirr and M-Pesa gateways',
     'National Bank of Ethiopia raises foreign exchange retention threshold for coffee exporters to 60%',
     'Commercial Bank of Ethiopia reports total asset base surpassing 2.4 Trillion ETB following digitalization'
   ],
-  heroArticleId: 'art-1',
-  topStoryArticleId: 'art-2',
-  trendingArticleIds: ['art-1', 'art-3', 'art-5', 'art-2'],
-  editorPickArticleIds: ['art-2', 'art-4', 'art-6']
+  heroArticleId: 'art-1788436049086',
+  topStoryArticleId: 'art-1',
+  trendingArticleIds: ['art-1788436049086', 'art-1', 'art-3', 'art-5', 'art-2'],
+  editorPickArticleIds: ['art-1', 'art-2', 'art-4', 'art-6']
 };
 
 export const INITIAL_AUTHORS: Author[] = [
@@ -180,6 +181,7 @@ export const INITIAL_AUTHORS: Author[] = [
 ];
 
 export const INITIAL_BREAKING_NEWS = [
+  'Tewolde Gebremariam Appointed Air India Limited CEO and Managing Director',
   'NBE FX Liberalization: Interbank foreign currency market liquidity surges 38% as commercial banks adjust spread margins',
   'Ethiopian Securities Exchange (ESX) secures initial public listings pipeline ahead of landmark debut trading quarter',
   'Ethio Telecom and Safaricom Ethiopia expand interoperable mobile money integrations via Telebirr and M-Pesa gateways',
@@ -189,6 +191,45 @@ export const INITIAL_BREAKING_NEWS = [
 ];
 
 export const INITIAL_ARTICLES: Article[] = [
+  {
+    id: 'art-1788436049086',
+    slug: 'advancing-next-horizon-ethio-telecom-unveils-2026-2027-business-plan',
+    title: 'Advancing Next Horizon: Ethio Telecom Unveils Year Two 2026/2027 Business Plan Targeting ETB 295 Billion Revenue',
+    subtitle: 'Under the Next Horizon 2028 strategy, the operator accelerates digital expansion, 5G deployment across 73 cities, and targets 96.2 million total subscribers with 67.7 million Telebirr users.',
+    excerpt: 'Ethio Telecom has officially launched its "Advancing Next Horizon — Year Two" annual business plan for the 2019 EFY (2026/27). The company targets ETB 295 billion in annual revenue, expanding 4G coverage to 95% and deploying 268 AI servers.',
+    content: [
+      'Ethio Telecom has officially unveiled its "Advancing Next Horizon — Year Two" annual business plan for the 2019 Ethiopian Fiscal Year (2026/2027), setting aggressive targets for digital modernization, revenue growth, and mobile financial services expansion.',
+      'Presenting the strategy at a high-level briefing in Addis Ababa, Chief Executive Officer Frehiwot Tamiru outlined the company’s trajectory to generate ETB 295 billion in revenue during the 2026/27 fiscal year — a 36.7% increase compared to the previous year. Digital and adjacent business services are projected to contribute ETB 77.45 billion, accounting for over 26% of overall receipts.',
+      'Under the Next Horizon 2028 roadmap, Ethio Telecom plans to expand its total subscriber base to 96.2 million users, with mobile voice customers reaching 92.3 million and mobile internet and data subscribers surging by 16.5% to 60.01 million. Fixed broadband subscriptions are projected to hit 1.26 million.',
+      'Network infrastructure investment remains paramount: the company will expand 4G coverage from 82.2% to 95% of the population, connecting 1,500 cities and towns. The 5G rollout will scale dramatically from 340 to 648 sites across 73 urban centers. To bridge rural digital divides, 1,685 new mobile towers — including 605 dedicated rural sites — will bring connectivity to 4.5 million citizens across 1,400 kebeles.',
+      'The Telebirr mobile money ecosystem continues to anchor Ethiopia’s cashless economy. Telebirr subscribers are projected to reach 67.69 million, processing an estimated 4.99 billion transactions with an aggregate turnover of ETB 7.4 trillion. Digital micro-loans via Telebirr are targeted at ETB 35.4 billion.',
+      'In parallel with connectivity, Ethio Telecom is deploying dedicated artificial intelligence infrastructure, including 268 AI-specialized servers and expanded data centers, establishing the backbone for national digital sovereignty and smart enterprise solutions.'
+    ],
+    category: 'Business',
+    author: INITIAL_AUTHORS[1] || INITIAL_AUTHORS[0],
+    publishedAt: '2026-09-02T10:00:00Z',
+    readTime: '4 min read',
+    featuredImage: '/images/ethio_telecom_horizon.jpg',
+    imageCaption: 'Ethio Telecom CEO Frehiwot Tamiru presenting the Advancing Next Horizon Year Two 2026/2027 Business Plan in Addis Ababa.',
+    featuredImageCredit: 'Ethio Telecom Press / Negarit Business Review',
+    isBreaking: false,
+    isHeroFeatured: true,
+    isTopStory: true,
+    isTrending: true,
+    isEditorPick: true,
+    views: 38450,
+    shares: 2940,
+    tags: ['Ethio Telecom', 'Telebirr', 'Next Horizon 2028', 'Frehiwot Tamiru', 'Business', 'Telecom', '5G', 'Ethiopia'],
+    keyTakeaways: [
+      'Annual revenue target set at ETB 295 Billion for the 2026/27 fiscal year (+36.7%).',
+      'Customer base projected to expand to 96.2 million total subscribers with 67.7 million Telebirr users.',
+      '4G population coverage expands to 95% (1,500 towns); 5G scales to 648 sites across 73 cities.',
+      'Telebirr transaction turnover targeted at ETB 7.4 Trillion with ETB 35.4 Billion in digital lending.'
+    ],
+    audioDuration: '4:45',
+    relatedCompany: 'Ethio Telecom',
+    status: 'published'
+  },
   {
     id: 'art-1',
     slug: 'ethiopia-market-based-fx-regime-capital-transformation',
@@ -209,7 +250,7 @@ export const INITIAL_ARTICLES: Article[] = [
     featuredImage: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&auto=format&fit=crop&q=80',
     imageCaption: 'Addis Ababa financial district skyline, featuring the National Bank of Ethiopia and premier commercial bank headquarters.',
     isBreaking: false,
-    isHeroFeatured: true,
+    isHeroFeatured: false,
     isEditorPick: true,
     isMostRead: true,
     views: 48920,

@@ -14,7 +14,7 @@ import {
   getDocFromServer
 } from 'firebase/firestore';
 import firebaseConfig from '../firebase-applet-config.json';
-import { Article, Comment, NewsletterSubscriber } from './types';
+import { Article, Comment, NewsletterSubscriber, FeaturedConfig } from './types';
 
 // Initialize Firebase App
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
@@ -234,3 +234,88 @@ export async function saveSubscriberToFirestore(subscriber: Partial<NewsletterSu
     console.warn('Error saving subscriber to Firestore:', error);
   }
 }
+
+/**
+ * Homepage Featured Layout Configuration Firestore helpers
+ */
+export async function saveFeaturedConfigToFirestore(config: FeaturedConfig): Promise<void> {
+  try {
+    await setDoc(doc(db, 'config', 'featured'), config, { merge: true });
+  } catch (error) {
+    console.warn('Error saving featuredConfig to Firestore:', error);
+  }
+}
+
+export async function fetchFeaturedConfigFromFirestore(): Promise<FeaturedConfig | null> {
+  try {
+    const snap = await getDoc(doc(db, 'config', 'featured'));
+    if (snap.exists()) {
+      return snap.data() as FeaturedConfig;
+    }
+  } catch (error) {
+    console.warn('Error fetching featuredConfig from Firestore:', error);
+  }
+  return null;
+}
+
+export function subscribeToFeaturedConfig(
+  onUpdate: (config: FeaturedConfig) => void
+): () => void {
+  try {
+    return onSnapshot(
+      doc(db, 'config', 'featured'),
+      snapshot => {
+        if (snapshot.exists()) {
+          onUpdate(snapshot.data() as FeaturedConfig);
+        }
+      },
+      err => console.warn('FeaturedConfig subscription warning:', err)
+    );
+  } catch (e) {
+    console.warn('Failed to subscribe to featuredConfig:', e);
+    return () => {};
+  }
+}
+
+/**
+ * Breaking News Bulletins Firestore helpers
+ */
+export async function saveBreakingNewsToFirestore(items: string[]): Promise<void> {
+  try {
+    await setDoc(doc(db, 'config', 'breakingNews'), { items, updatedAt: new Date().toISOString() }, { merge: true });
+  } catch (error) {
+    console.warn('Error saving breakingNews to Firestore:', error);
+  }
+}
+
+export async function fetchBreakingNewsFromFirestore(): Promise<string[] | null> {
+  try {
+    const snap = await getDoc(doc(db, 'config', 'breakingNews'));
+    if (snap.exists() && Array.isArray(snap.data().items)) {
+      return snap.data().items as string[];
+    }
+  } catch (error) {
+    console.warn('Error fetching breakingNews from Firestore:', error);
+  }
+  return null;
+}
+
+export function subscribeToBreakingNews(
+  onUpdate: (items: string[]) => void
+): () => void {
+  try {
+    return onSnapshot(
+      doc(db, 'config', 'breakingNews'),
+      snapshot => {
+        if (snapshot.exists() && Array.isArray(snapshot.data().items)) {
+          onUpdate(snapshot.data().items as string[]);
+        }
+      },
+      err => console.warn('BreakingNews subscription warning:', err)
+    );
+  } catch (e) {
+    console.warn('Failed to subscribe to breakingNews:', e);
+    return () => {};
+  }
+}
+

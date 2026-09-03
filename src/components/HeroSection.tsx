@@ -4,11 +4,15 @@ import { useApp } from '../context/AppContext';
 import { Article } from '../types';
 
 export const HeroSection: React.FC = () => {
-  const { articles, openArticle, isBookmarked, toggleBookmark, setCurrentView } = useApp();
+  const { articles, featuredConfig, openArticle, isBookmarked, toggleBookmark, setCurrentView } = useApp();
 
-  // Find hero featured article or fallback to first published
+  // Find hero featured article: prioritize featuredConfig.heroArticleId, then isHeroFeatured, then fallback to first published
   const publishedArticles = articles.filter(a => a.status === 'published');
-  const heroArticle = publishedArticles.find(a => a.isHeroFeatured) || publishedArticles[0] || articles[0];
+  const heroArticle = 
+    (featuredConfig?.heroArticleId ? publishedArticles.find(a => a.id === featuredConfig.heroArticleId) : null) ||
+    publishedArticles.find(a => a.isHeroFeatured) || 
+    publishedArticles[0] || 
+    articles[0];
   
   // Side stories: 3-4 other high importance articles
   const sideArticles = publishedArticles

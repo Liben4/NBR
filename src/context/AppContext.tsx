@@ -49,7 +49,13 @@ import {
   syncLocalArticlesToFirestore,
   saveCommentToFirestore,
   subscribeToComments,
-  saveSubscriberToFirestore
+  saveSubscriberToFirestore,
+  saveFeaturedConfigToFirestore,
+  fetchFeaturedConfigFromFirestore,
+  subscribeToFeaturedConfig,
+  saveBreakingNewsToFirestore,
+  fetchBreakingNewsFromFirestore,
+  subscribeToBreakingNews
 } from '../firebase';
 
 export const DEFAULT_ADMIN_ACCOUNTS: { [email: string]: { password: string; user: AdminUser } } = {
@@ -657,7 +663,21 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       }
     });
 
-    // 4. Also query Cloud SQL API backend as secondary data source
+    // 4. Real-time subscription to featured layout config
+    const unsubscribeFeatured = subscribeToFeaturedConfig(cloudConfig => {
+      if (cloudConfig && cloudConfig.heroArticleId) {
+        setFeaturedConfig(cloudConfig);
+      }
+    });
+
+    // 5. Real-time subscription to breaking news
+    const unsubscribeBreaking = subscribeToBreakingNews(cloudBreaking => {
+      if (Array.isArray(cloudBreaking) && cloudBreaking.length > 0) {
+        setBreakingNewsState(cloudBreaking);
+      }
+    });
+
+    // 6. Also query Cloud SQL API backend as secondary data source
     const fetchCloudSqlData = async () => {
       try {
         const [artRes, currRes, subRes, comRes] = await Promise.allSettled([
@@ -698,6 +718,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return () => {
       unsubscribeArticles();
       unsubscribeComments();
+      unsubscribeFeatured();
+      unsubscribeBreaking();
     };
   }, []);
 
@@ -982,13 +1004,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Featured Content Management
   const updateFeaturedConfig = (updates: Partial<FeaturedConfig>) => {
-    setFeaturedConfig(prev => ({ ...prev, ...updates }));
+    setFeaturedConfig(prev => {
+      const next = { ...prev, ...updates };
+      saveFeaturedConfigToFirestore(next).catch(e => console.warn('Cloud featuredConfig sync failed:', e));
+      return next;
+    });
     showToast('Homepage featured layout updated');
   };
 
   const setBreakingNews = (items: string[]) => {
     setBreakingNewsState(items);
-    setFeaturedConfig(prev => ({ ...prev, breakingNewsTicker: items }));
+    setFeaturedConfig(prev => {
+      const next = { ...prev, breakingNewsTicker: items };
+      saveFeaturedConfigToFirestore(next).catch(console.warn);
+      return next;
+    });
+    saveBreakingNewsToFirestore(items).catch(console.warn);
     showToast('Breaking news ticker updated');
   };
 
@@ -996,14 +1027,24 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (!item.trim()) return;
     const updated = [item.trim(), ...breakingNews];
     setBreakingNewsState(updated);
-    setFeaturedConfig(prev => ({ ...prev, breakingNewsTicker: updated }));
+    setFeaturedConfig(prev => {
+      const next = { ...prev, breakingNewsTicker: updated };
+      saveFeaturedConfigToFirestore(next).catch(console.warn);
+      return next;
+    });
+    saveBreakingNewsToFirestore(updated).catch(console.warn);
     showToast('Breaking news bulletin added to ticker');
   };
 
   const deleteBreakingNews = (index: number) => {
     const updated = breakingNews.filter((_, idx) => idx !== index);
     setBreakingNewsState(updated);
-    setFeaturedConfig(prev => ({ ...prev, breakingNewsTicker: updated }));
+    setFeaturedConfig(prev => {
+      const next = { ...prev, breakingNewsTicker: updated };
+      saveFeaturedConfigToFirestore(next).catch(console.warn);
+      return next;
+    });
+    saveBreakingNewsToFirestore(updated).catch(console.warn);
     showToast('Breaking bulletin removed');
   };
 
