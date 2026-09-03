@@ -1,0 +1,28 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Articles: Anyone can read, anyone can write/publish news updates
+    match /articles/{articleId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // Comments: Anyone can read and post comments
+    match /comments/{commentId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // Subscribers: Anyone can subscribe
+    match /subscribers/{subscriberId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // Fallback for configuration or metadata
+    match /{document=**} {
+      allow read: if true;
+      allow write: if true;
+    }
+  }
+}

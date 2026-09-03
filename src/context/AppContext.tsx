@@ -39,6 +39,18 @@ import {
   INITIAL_SECURITY_SETTINGS,
   INITIAL_SUBSCRIBERS 
 } from '../data/seedData';
+import {
+  fetchArticlesFromFirestore,
+  fetchArticleById,
+  saveArticleToFirestore,
+  updateArticleInFirestore,
+  deleteArticleFromFirestore,
+  subscribeToArticles,
+  syncLocalArticlesToFirestore,
+  saveCommentToFirestore,
+  subscribeToComments,
+  saveSubscriberToFirestore
+} from '../firebase';
 
 export const DEFAULT_ADMIN_ACCOUNTS: { [email: string]: { password: string; user: AdminUser } } = {
   'liben457@gmail.com': {
@@ -72,6 +84,9 @@ interface AppContextType {
   selectedCategory: CategoryType;
   setSelectedCategory: (category: CategoryType) => void;
   selectedArticle: Article | null;
+  isLoadingArticle: boolean;
+  requestedArticleId: string | null;
+  refreshArticles: () => Promise<void>;
   openArticle: (article: Article) => void;
   selectedLeader: BusinessLeader | null;
   setSelectedLeader: (leader: BusinessLeader | null) => void;
@@ -194,6 +209,20 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [currentView, setCurrentViewInternal] = useState<ViewMode>(getInitialView);
   const [selectedCategory, setSelectedCategory] = useState<CategoryType>('All');
+  const [requestedArticleId, setRequestedArticleId] = useState<string | null>(() => {
+    if (typeof window !== 'undefined') {
+      const hash = window.location.hash;
+      const search = window.location.search;
+      if (hash.includes('article=')) {
+        return hash.split('article=')[1]?.split('&')[0] || null;
+      } else if (search.includes('article=')) {
+        return new URLSearchParams(search).get('article=') || null;
+      }
+    }
+    return null;
+  });
+  const [isLoadingArticle, setIsLoadingArticle] = useState<boolean>(false);
+
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(() => {
     if (typeof window !== 'undefined') {
       const hash = window.location.hash;
@@ -244,19 +273,36 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => {
     const handleLocationChange = () => {
       const path = window.location.pathname.toLowerCase();
-      const hash = window.location.hash.toLowerCase();
-      const search = window.location.search.toLowerCase();
+      const hash = window.location.hash;
+      const search = window.location.search;
 
       if (hash.includes('article=')) {
-        const artId = window.location.hash.split('article=')[1]?.split('&')[0];
+        const artId = hash.split('article=')[1]?.split('&')[0];
+        setRequestedArticleId(artId);
+        setCurrentViewInternal('article');
+
         const saved = localStorage.getItem('negarit_articles');
         const pool: Article[] = saved ? JSON.parse(saved) : INITIAL_ARTICLES;
         const matched = pool.find(a => a.id === artId || a.slug === artId);
         if (matched) {
           setSelectedArticle(matched);
-          setCurrentViewInternal('article');
+          setIsLoadingArticle(false);
           return;
         }
+
+        // Fetch from Firestore if not in current pool
+        setIsLoadingArticle(true);
+        fetchArticleById(artId).then(art => {
+          if (art) {
+            setSelectedArticle(art);
+            setArticles(prev => prev.some(a => a.id === art.id) ? prev : [art, ...prev]);
+          }
+        }).catch(err => {
+          console.warn('Error fetching article from Firestore:', err);
+        }).finally(() => {
+          setIsLoadingArticle(false);
+        });
+        return;
       }
 
       if (path === '/admin' || path.startsWith('/admin') || path.endsWith('/admin') || hash.includes('admin') || search.includes('admin')) {
@@ -531,8 +577,87 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return () => clearInterval(interval);
   }, []);
 
-  // Fetch initial data from Cloud SQL backend
+  // Resolve requested article from URL whenever requestedArticleId or articles change
   useEffect(() => {
+    if (!requestedArticleId) return;
+
+    // Check if already selected
+    if (selectedArticle && (selectedArticle.id === requestedArticleId || selectedArticle.slug === requestedArticleId)) {
+      setIsLoadingArticle(false);
+      return;
+    }
+
+    // Check in local articles pool
+    const matched = articles.find(a => a.id === requestedArticleId || a.slug === requestedArticleId);
+    if (matched) {
+      setSelectedArticle(matched);
+      setIsLoadingArticle(false);
+      setCurrentViewInternal('article');
+      return;
+    }
+
+    // Fetch from Firestore cloud
+    setIsLoadingArticle(true);
+    fetchArticleById(requestedArticleId)
+      .then(art => {
+        if (art) {
+          setSelectedArticle(art);
+          setArticles(prev => prev.some(a => a.id === art.id) ? prev : [art, ...prev]);
+          setCurrentViewInternal('article');
+        }
+      })
+      .catch(err => {
+        console.warn('Error fetching requested article from Firestore:', err);
+      })
+      .finally(() => {
+        setIsLoadingArticle(false);
+      });
+  }, [requestedArticleId, articles]);
+
+  // Sync with Firestore Cloud Database & real-time updates
+  useEffect(() => {
+    // 1. Upload any local articles created on this device (e.g. desktop) to Firestore
+    try {
+      const saved = localStorage.getItem('negarit_articles');
+      if (saved) {
+        const localList: Article[] = JSON.parse(saved);
+        if (Array.isArray(localList) && localList.length > 0) {
+          syncLocalArticlesToFirestore(localList);
+        }
+      }
+    } catch (e) {
+      console.warn('Failed to parse local articles for cloud sync:', e);
+    }
+
+    // 2. Real-time subscription to articles in Firestore
+    const unsubscribeArticles = subscribeToArticles(firestoreArticles => {
+      if (Array.isArray(firestoreArticles) && firestoreArticles.length > 0) {
+        setArticles(prev => {
+          const map = new Map<string, Article>();
+          // Cloud articles are canonical
+          firestoreArticles.forEach(a => map.set(a.id, a));
+          // Overlay any local unsynced drafts
+          prev.forEach(a => {
+            if (!map.has(a.id)) {
+              map.set(a.id, a);
+            }
+          });
+          const merged = Array.from(map.values()).sort(
+            (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+          );
+          return merged;
+        });
+      }
+    });
+
+    // 3. Real-time subscription to comments in Firestore
+    const unsubscribeComments = subscribeToComments(firestoreComments => {
+      if (Array.isArray(firestoreComments) && firestoreComments.length > 0) {
+        setComments(firestoreComments);
+      }
+    });
+
+    // 4. Also query Cloud SQL API backend as secondary data source
     const fetchCloudSqlData = async () => {
       try {
         const [artRes, currRes, subRes, comRes] = await Promise.allSettled([
@@ -543,7 +668,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         ]);
 
         if (artRes.status === 'fulfilled' && Array.isArray(artRes.value) && artRes.value.length > 0) {
-          setArticles(artRes.value);
+          setArticles(prev => {
+            const map = new Map<string, Article>();
+            artRes.value.forEach((a: Article) => map.set(a.id, a));
+            prev.forEach(a => {
+              if (!map.has(a.id)) map.set(a.id, a);
+            });
+            return Array.from(map.values()).sort(
+              (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+            );
+          });
         }
         if (currRes.status === 'fulfilled' && Array.isArray(currRes.value) && currRes.value.length > 0) {
           setCurrencies(currRes.value);
@@ -555,12 +689,37 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           setComments(comRes.value);
         }
       } catch (e) {
-        console.warn('Initial Cloud SQL synchronization completed with local cache fallback:', e);
+        console.warn('Secondary Cloud SQL sync warning:', e);
       }
     };
 
     fetchCloudSqlData();
+
+    return () => {
+      unsubscribeArticles();
+      unsubscribeComments();
+    };
   }, []);
+
+  const refreshArticles = async () => {
+    try {
+      setIsLoadingArticle(true);
+      const firestoreArts = await fetchArticlesFromFirestore();
+      if (firestoreArts.length > 0) {
+        setArticles(firestoreArts);
+      }
+      if (requestedArticleId) {
+        const matched = firestoreArts.find(a => a.id === requestedArticleId || a.slug === requestedArticleId);
+        if (matched) {
+          setSelectedArticle(matched);
+        }
+      }
+    } catch (e) {
+      console.warn('Error refreshing articles:', e);
+    } finally {
+      setIsLoadingArticle(false);
+    }
+  };
 
   const toggleTheme = () => {
     setIsDarkMode(prev => !prev);
@@ -691,7 +850,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const openArticle = (article: Article) => {
+    setRequestedArticleId(article.id);
     setSelectedArticle(article);
+    setIsLoadingArticle(false);
     setCurrentViewInternal('article');
     incrementViews(article.id);
     if (typeof window !== 'undefined') {
@@ -737,6 +898,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
     setSubscribers(prev => [newSub, ...prev]);
     showToast('Subscribed successfully. Welcome to Negarit Executive Intelligence.');
+    
+    // Save to Firestore
+    saveSubscriberToFirestore({
+      email,
+      name: name || 'Valued Reader',
+      status: 'active',
+      subscribedAt: new Date().toISOString()
+    });
+
     fetch('/api/subscribers', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -846,7 +1016,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       shares: 0,
     };
     setArticles(prev => [article, ...prev]);
-    showToast(`Article "${article.title.slice(0, 30)}..." saved (${article.status})`);
+    showToast(`Article "${article.title.slice(0, 30)}..." published live to network`);
+    
+    // Save to Firestore so mobile and all readers immediately get it
+    saveArticleToFirestore(article).catch(err => {
+      console.warn('Firestore article save warning:', err);
+    });
+
     fetch('/api/articles', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -859,7 +1035,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (selectedArticle && selectedArticle.id === id) {
       setSelectedArticle(prev => prev ? { ...prev, ...updatedFields } : null);
     }
-    showToast('Article updated successfully');
+    showToast('Article updated across all devices');
+
+    // Update in Firestore
+    updateArticleInFirestore(id, updatedFields).catch(err => {
+      console.warn('Firestore article update warning:', err);
+    });
+
     fetch(`/api/articles/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -874,6 +1056,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setCurrentView('home');
     }
     showToast('Article removed from publication');
+
+    // Delete in Firestore
+    deleteArticleFromFirestore(id).catch(err => {
+      console.warn('Firestore article delete warning:', err);
+    });
+
     fetch(`/api/articles/${id}`, {
       method: 'DELETE'
     }).catch(err => console.warn('Cloud SQL article delete warning:', err));
@@ -931,6 +1119,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
     setComments(prev => [newComment, ...prev]);
     showToast('Comment published successfully');
+
+    // Save to Firestore
+    saveCommentToFirestore(newComment).catch(err => {
+      console.warn('Firestore comment save warning:', err);
+    });
+
     fetch('/api/comments', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -1147,6 +1341,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         selectedCategory,
         setSelectedCategory,
         selectedArticle,
+        isLoadingArticle,
+        requestedArticleId,
+        refreshArticles,
         openArticle,
         selectedLeader,
         setSelectedLeader,

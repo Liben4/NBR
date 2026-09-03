@@ -30,6 +30,9 @@ import { Article } from '../types';
 export const ArticleView: React.FC = () => {
   const { 
     selectedArticle, 
+    isLoadingArticle,
+    requestedArticleId,
+    refreshArticles,
     setCurrentView, 
     openArticle, 
     articles, 
@@ -96,21 +99,103 @@ export const ArticleView: React.FC = () => {
     return () => clearInterval(interval);
   }, [isPlayingAudio]);
 
-  if (!selectedArticle) {
+  if (isLoadingArticle) {
     return (
-      <div className="max-w-4xl mx-auto py-24 px-4 text-center">
-        <h2 className="font-editorial text-3xl font-bold text-slate-800 dark:text-slate-200">No article selected</h2>
-        <p className="text-sm text-slate-500 mt-2">Please select an article from the home edition or search catalog.</p>
-        <button 
-          onClick={() => {
-            setCurrentView('home');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }}
-          className="mt-6 inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold shadow-md transition-all active:scale-95"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span>Return to Front Page</span>
-        </button>
+      <div className="w-full bg-slate-50/60 dark:bg-slate-950 min-h-screen py-24 px-4 text-center">
+        <div className="max-w-xl mx-auto">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 mb-6 shadow-sm border border-blue-100 dark:border-blue-900/40 animate-pulse">
+            <Clock className="w-8 h-8 animate-spin text-blue-600 dark:text-blue-400" />
+          </div>
+          <h2 className="font-editorial text-2xl sm:text-3xl font-bold text-slate-800 dark:text-slate-200">
+            Retrieving Live Intelligence Dispatch
+          </h2>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">
+            Connecting to the Negarit Newsroom Cloud {requestedArticleId ? `for article "${requestedArticleId}"` : ''}...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!selectedArticle) {
+    const publishedRecent = articles.filter(a => a.status === 'published').slice(0, 4);
+
+    return (
+      <div className="w-full bg-slate-50/60 dark:bg-slate-950 min-h-screen py-16 px-4">
+        <div className="max-w-3xl mx-auto text-center">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 mb-5 border border-amber-200 dark:border-amber-800/60">
+            <Flame className="w-7 h-7" />
+          </div>
+          <h2 className="font-editorial text-2xl sm:text-3xl font-bold text-slate-800 dark:text-slate-200">
+            {requestedArticleId ? 'Dispatch Synchronizing Across Devices' : 'No Article Selected'}
+          </h2>
+          <p className="text-sm text-slate-600 dark:text-slate-400 mt-2 max-w-lg mx-auto leading-relaxed">
+            {requestedArticleId
+              ? `The article reference (${requestedArticleId}) is currently being propagated across the Negarit live cloud network. If this story was drafted on your laptop, ensure the desktop browser tab is open to finish syncing to mobile devices.`
+              : 'Please select an article from the home edition, browse categories, or use search.'}
+          </p>
+
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+            <button
+              onClick={() => {
+                refreshArticles();
+                showToast('Checking live network for latest article updates...');
+              }}
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs sm:text-sm font-semibold shadow-md transition-all active:scale-95"
+            >
+              <Clock className="w-4 h-4" />
+              <span>Check for Updates / Retry</span>
+            </button>
+            <button 
+              onClick={() => {
+                setCurrentView('home');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-800 rounded-xl text-xs sm:text-sm font-semibold shadow-xs transition-all active:scale-95"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Return to Front Page</span>
+            </button>
+          </div>
+
+          {/* Quick Dispatches Grid so reader is never stranded */}
+          {publishedRecent.length > 0 && (
+            <div className="mt-14 pt-10 border-t border-slate-200 dark:border-slate-800 text-left">
+              <div className="flex items-center justify-between mb-5">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                  Latest Published Dispatches
+                </span>
+                <span className="text-xs text-blue-600 dark:text-blue-400 font-semibold">
+                  Live Newsroom
+                </span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {publishedRecent.map(art => (
+                  <div
+                    key={art.id}
+                    onClick={() => {
+                      openArticle(art);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className="p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl hover:border-blue-500/50 dark:hover:border-blue-500/50 transition-all cursor-pointer group shadow-2xs hover:shadow-md"
+                  >
+                    <div className="flex items-center gap-2 mb-2 text-xs text-blue-600 dark:text-blue-400 font-semibold">
+                      <span>{art.category}</span>
+                      <span className="text-slate-300 dark:text-slate-700">•</span>
+                      <span className="text-slate-400 font-normal">{art.readTime}</span>
+                    </div>
+                    <h3 className="font-editorial text-base font-bold text-slate-900 dark:text-white line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                      {art.title}
+                    </h3>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 mt-1.5 leading-relaxed">
+                      {art.excerpt}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     );
   }

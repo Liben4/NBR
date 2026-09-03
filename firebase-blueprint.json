@@ -1,0 +1,67 @@
+{
+  "entities": {
+    "Article": {
+      "title": "Article",
+      "description": "A published or draft news article",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "slug": { "type": "string" },
+        "title": { "type": "string" },
+        "subtitle": { "type": "string" },
+        "excerpt": { "type": "string" },
+        "content": { "type": "array" },
+        "category": { "type": "string" },
+        "author": { "type": "object" },
+        "publishedAt": { "type": "string" },
+        "readTime": { "type": "string" },
+        "featuredImage": { "type": "string" },
+        "views": { "type": "number" },
+        "shares": { "type": "number" },
+        "status": { "type": "string", "enum": ["published", "draft"] }
+      },
+      "required": ["id", "title", "content", "category", "status"]
+    },
+    "Comment": {
+      "title": "Comment",
+      "description": "User comments on articles",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "articleId": { "type": "string" },
+        "authorName": { "type": "string" },
+        "content": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "likes": { "type": "number" },
+        "status": { "type": "string", "enum": ["approved", "pending", "rejected"] }
+      },
+      "required": ["id", "articleId", "authorName", "content", "createdAt"]
+    },
+    "Subscriber": {
+      "title": "Subscriber",
+      "description": "Newsletter subscribers",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string" },
+        "name": { "type": "string" },
+        "status": { "type": "string" },
+        "subscribedAt": { "type": "string" }
+      },
+      "required": ["email", "subscribedAt"]
+    }
+  },
+  "firestore": {
+    "/articles/{articleId}": {
+      "schema": "Article",
+      "description": "Collection of business articles"
+    },
+    "/comments/{commentId}": {
+      "schema": "Comment",
+      "description": "User reader comments"
+    },
+    "/subscribers/{subscriberId}": {
+      "schema": "Subscriber",
+      "description": "Newsletter subscriber accounts"
+    }
+  }
+}
